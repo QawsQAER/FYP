@@ -1,2 +1,1 @@
-Hello
-My final year project
+Hello FYP
