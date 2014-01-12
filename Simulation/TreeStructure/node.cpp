@@ -9,6 +9,8 @@ node::node(uint32_t ID, node* parent, uint32_t delay)
 	this->ID = ID;
 	this->parent = parent;
 	this->delay = delay;
+	this->prev = NULL;
+	this->next = NULL;
 }
 
 

@@ -11,8 +11,6 @@ class node
 	/-------------PRIVATE DATA FIELD-------------*/ 
 	//pointer pointing to its parent
 	node* parent;
-	node* prev;
-	node* next;
  	
 	uint32_t ID;
 	uint32_t delay;
@@ -21,8 +19,9 @@ class node
 	/*--------------------------------------------\
 	/--------------------------------------------\
 	/---------PUBLIC DATA FIELD------------------*/
-	std::vector<node> children;
-
+	std::vector<node*> children;
+	node* prev;
+	node* next;
 	/*--------------------------------------------\
 	/---------------------------------------------\
 	/---------PUBLIC METHOD-----------------------*/
