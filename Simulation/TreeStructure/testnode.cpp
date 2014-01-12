@@ -3,7 +3,8 @@
 
 int main()
 {
-	node a(2);
-	printf("%d\n",a.get_max_child());
+	node a(1,NULL);
+	node b(2,&a);
+	printf("parent's ID is %d\n",b.get_parent()->get_ID());
 	return 0;
 }

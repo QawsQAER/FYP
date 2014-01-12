@@ -1,20 +1,22 @@
 #include "../TYPEDEF.h"
 #include "node.h"
-#include "stdio.h"
 //Constructor
 node::node()
+{}
+
+node::node(uint32_t ID, node* parent)
 {
-	this->max_child = 2;
-	printf("when constructed max_child = %d\n",this->max_child);	
+	this->ID = ID;
+	this->parent = parent;
 }
 
-node::node(uint8_t max_child)
+
+node* node::get_parent()
 {
-	this->max_child = max_child;	
+	return this->parent;
 }
 
-//
-uint8_t node::get_max_child()
+uint32_t node::get_ID()
 {
-	return this->max_child;
+	return this->ID;
 }
