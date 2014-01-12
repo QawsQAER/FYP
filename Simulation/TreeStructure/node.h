@@ -1,7 +1,7 @@
 #ifndef _NODE_H
 #define _NODE_H
 #include "../TYPEDEF.h"
-#include <list>
+#include <vector>
 
 class node
 {
@@ -10,27 +10,33 @@ class node
 	/--------------------------------------------\
 	/-------------PRIVATE DATA FIELD-------------*/ 
 	//pointer pointing to its parent
-	node* parent; 	
+	node* parent;
+	node* prev;
+	node* next;
+ 	
 	uint32_t ID;
-
+	uint32_t delay;
 
 	public:
 	/*--------------------------------------------\
 	/--------------------------------------------\
 	/---------PUBLIC DATA FIELD------------------*/
-	std::list<node> children;
+	std::vector<node> children;
 
 	/*--------------------------------------------\
 	/---------------------------------------------\
 	/---------PUBLIC METHOD-----------------------*/
 	
 	// Constructor
-	node();	
-        node(uint32_t ID = 0, node* parent = NULL);	
-	
+	node();		
+	node(uint32_t ID, node* parent = NULL, uint32_t delay = 0);
 	//get pointer to parent	
 	node* get_parent();
 	//get ID
-	uint32_t get_ID();	
+	uint32_t get_ID();
+	//get delay
+	uint32_t get_delay();
+	//set delay
+	void set_delay(uint32_t delay);	
 };
 #endif
