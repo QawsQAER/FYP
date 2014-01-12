@@ -14,6 +14,7 @@ class TreeStructure
 	node* last;
 	uint32_t total;
 	uint8_t max_child;
+	uint32_t max_delay;
 	
 
 	public:
@@ -28,12 +29,13 @@ class TreeStructure
 	
 	uint32_t get_total();
 	
+	uint32_t get_max_delay();
+	
 	void add_node(node new_node);
 	
 	void add_node(uint32_t ID);
 	
 	void display_tree();
-	void recursive_add_node(node* temp_root, uint32_t ID);
 	
 };
 #endif

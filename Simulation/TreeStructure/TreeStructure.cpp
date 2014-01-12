@@ -10,6 +10,7 @@ TreeStructure::TreeStructure(uint8_t max_child)
 	this->root = new node(0,NULL,0);
 	this->current = this->root;
 	this->last = this->root;
+	this->max_delay = 0;
 	this->total = 0;
 }
 
@@ -28,55 +29,41 @@ uint32_t TreeStructure::get_total()
 	return this->total;
 }
 
-void TreeStructure::add_node( uint32_t ID)
+uint32_t TreeStructure::get_max_delay()
+{
+	return this->max_delay;
+}
+void TreeStructure::add_node(uint32_t ID)
 {
 	node* temp = new node(ID,current);
 	
+	//CASE FOR THE FIRST CHILDREN OF A NODE
+	if(current->children.size() == 0)
+	temp->set_delay(current->get_delay() + 1);
+	else//OTHERWISE
+	temp->set_delay(last->get_delay() + 1);
+	
+	//UPDATE MAX_DELAY
+	if(temp->get_delay() > this->max_delay)
+	this->max_delay = temp->get_delay();
+	
+	//ADD THE NODE AS THE CURRENT NODE'S CHILD
 	current->children.push_back(temp);
-
+	//UPDATE TOTAL
+	this->total++;
+	//UPDATE LAST ADDED NODE
 	temp->prev = last;
 	last->next = temp;
 
 	uint8_t size = current->children.size();
+	//IF CURRENT NODE IS THE LAST POSSIBLE CHILD OF CURRENT
 	if(size >= max_child)
 	{
-		//CASE  IF CURRENT NODE IS THE LAST ONE
+		//MOVE CURRENT TO THE NEXT NODE
 		current = current->next;	
 	}
 	last = temp;
 }
-
-void TreeStructure::recursive_add_node(node* temp_root, uint32_t ID)
-{
-	uint8_t size = temp_root->children.size();
-	if(size >= this->max_child)
-	{	
-		//IN CASE THE TEMP_ROOT IS FULL
-		for(uint8_t count;count < size;count++)
-		{
-			if(temp_root->children[count]->children.size() < this->max_child)
-			;	
-		}
-	}
-	else if(size == 0)
-	{
-		//IN CASE THE TEMP_ROOT IS EMPTY
-		node* temp = new node(ID,temp_root,temp_root->get_delay() + 1);
-		temp->prev = temp_root;
-		temp_root->children.push_back(temp);
-	}
-	else
-	{
-		//IN CASE THE TEMP_ROOT IS NEITHER FULL NOR EMPTY
-		node* prev = temp_root->children[size - 1];
-		node* temp = new node(ID,temp_root,prev->get_delay() + 1); 
-		temp->prev = prev;
-		temp_root->children.push_back(temp);
-	}
-	
-	
-}
-
 
 void TreeStructure::display_tree()
 {
@@ -92,7 +79,7 @@ void TreeStructure::display_tree()
 		{
 			this_level.push_back(the_queue.front());
 			the_queue.pop(); 
-			printf("%d, ",this_level[this_level.size() - 1]->get_ID());
+			printf("(%d,%d)",this_level[this_level.size() - 1]->get_ID(),this_level[this_level.size() - 1]->get_delay());
 		}
 		uint16_t count = 0;
 		
