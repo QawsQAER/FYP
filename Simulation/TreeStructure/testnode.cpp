@@ -24,7 +24,7 @@ int main(int argc, char ** argv)
 	for(ID = 1;ID < num_of_node;ID++)
 		Tree.add_node(ID);
 //	Tree.display_tree();
-	printf("the maximum delay of this tree with %d max child is %d\n\n",Tree.get_max(),Tree.get_max_delay());
+	printf("the maximum delay of this tree with %d max child is %d, overall delay is %d\n\n",Tree.get_max(),Tree.get_max_delay(),Tree.get_overall_delay());
 
 	return 0;
 }

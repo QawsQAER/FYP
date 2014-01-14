@@ -15,7 +15,7 @@ class TreeStructure
 	uint32_t total;
 	uint8_t max_child;
 	uint32_t max_delay;
-	
+	uint32_t overall_delay;	
 
 	public:
 	/*------------------------------------------\
@@ -31,6 +31,8 @@ class TreeStructure
 	
 	uint32_t get_max_delay();
 	
+	uint32_t get_overall_delay();
+
 	void add_node(node new_node);
 	
 	void add_node(uint32_t ID);

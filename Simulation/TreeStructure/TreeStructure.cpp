@@ -11,6 +11,7 @@ TreeStructure::TreeStructure(uint8_t max_child)
 	this->current = this->root;
 	this->last = this->root;
 	this->max_delay = 0;
+	this->overall_delay = 0;
 	this->total = 0;
 }
 
@@ -33,6 +34,11 @@ uint32_t TreeStructure::get_max_delay()
 {
 	return this->max_delay;
 }
+uint32_t TreeStructure::get_overall_delay()
+{
+	return this->overall_delay;
+}
+
 void TreeStructure::add_node(uint32_t ID)
 {
 	node* temp = new node(ID,current);
@@ -47,6 +53,8 @@ void TreeStructure::add_node(uint32_t ID)
 	if(temp->get_delay() > this->max_delay)
 	this->max_delay = temp->get_delay();
 	
+	//ADD TO THE OVERALL DELAY
+	this->overall_delay += temp->get_delay();
 	//ADD THE NODE AS THE CURRENT NODE'S CHILD
 	current->children.push_back(temp);
 	//UPDATE TOTAL
