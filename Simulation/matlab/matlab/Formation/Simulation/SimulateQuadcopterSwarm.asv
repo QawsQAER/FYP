@@ -1,0 +1,10 @@
+function [ now_pos, now_vel ] = SimulateQuadcopterSwarm( now_pos,now_vel,waypoint,number )
+%  This fuction simulate the quadcopter swarm's behavior
+%   Detailed explanation goes here
+    now_pos = waypoint;
+    now_vel = rand(number,2);
+    for count = 1:number
+        new_pos = [new_pos;SimulateQuadcopter(now_pos(count),now_vel(count),waypoint(number))];
+    end
+end
+

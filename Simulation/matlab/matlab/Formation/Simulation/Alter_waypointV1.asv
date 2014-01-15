@@ -1,0 +1,16 @@
+function [left_waypoint,right_waypoint,left,right] = Alter_waypointV1(NO,Set_of_Quadcopter,Waypoint,Position)
+%UNTITLED3 Summary of this function goes here
+%   Detailed explanation goes here
+
+    for count = 1:length(Set_of_Quadcopter)
+        num = Set_of_Quadcopter(count);
+        fprintf('number is %d\n',x);
+    end % end for
+   
+    dummy = 1;
+    left = dummy;
+    right = dummy;
+    left_waypoint = dummy;
+    right_waypoint = dummy;
+end
+

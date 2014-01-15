@@ -1,0 +1,133 @@
+function [ temp_target ] = Alterwaypoint(Exp_pos,waypoint,target_list);
+%   the output temp_target should be in format
+%   [quad_num, target position X, target position Y]
+%   Detailed explanation goes here
+    if(isempty(waypoint))
+        temp_target = [];
+        return ;
+    end 
+    waypoint
+    longest_path = waypoint(end,:)
+    fprintf('longest path is [%f %f %f]\n',longest_path(1),longest_path(2),longest_path(3));
+    pos_of_quad = Exp_pos(longest_path(2),2:3);  % the position of the quadcopter of the longest path
+    pos_of_targ = target_list(longest_path(3),2:3); % the position of the target of the longest path
+    
+    LR = [pos_of_quad, pos_of_targ];
+    
+    left_waypoint = []; % the list of path which lays on the right side of the longest path, the waypoint [distance, quad_num, target_num] is stored
+    right_waypoint = []; % the list of path which lays on the left side of the longest path, the waypoint [distance, quad_num, target_num] is stored
+    any_intersection = 0;
+    temp_path = [];
+    
+    %Compute the Equation for the line where the longest path stays as
+    % Ax + By + C = 0
+    toppoint = [];
+    if((pos_of_quad(1) - pos_of_targ(1)) == 0)
+        %case for vertical line
+        A = 1;
+        B = 0;
+        C = pos_of_quad(1);
+        %toppoint = [x1,0,x1,50];
+        toppoint = [pos_of_quad(1), 0, pos_of_quad(1),50];
+        
+    else if((pos_of_quad(2) - pos_of_targ(2)) == 0)
+        %case for horizontal line
+        A = 1;
+        B = 1;
+        C = pos_of_quad(2);
+        %toppoint = [0,y1,50,y1];
+        toppoint = [0, pos_of_quad(2),50,pos_of_quad(2)];
+        else
+            %case for nomoral line
+            A = 1;
+            % B = (x2 - x1) / (y1 - y2); 
+            B = (-1) .* (pos_of_quad(1) - pos_of_targ(1)) ./ (pos_of_quad(2) - pos_of_targ(2));
+            % C = -x1 - B * y1 
+            C = (-1) .* pos_of_quad(1) - B .* pos_of_quad(2);
+            % y1 = -C / B when x = 0
+            y1 = (-1) .* C  ./ B;
+            % y2 = -50 C / B when x = 50
+            y2 = ((-1).* C - 50)./ B;
+            toppoint = [0,y1,50,y2];
+        end
+    end
+    
+        
+    temp_target = [];
+    for count = 1:(size(waypoint,1) - 1)
+        fprintf('count is %d\n',count);
+        temp_path = waypoint(count,:); %[distance, quad_num, target_num], expect for the longest path
+        
+        temp_pos_of_quad = Exp_pos(temp_path(2),2:3);
+        temp_pos_of_targ = target_list(temp_path(3),2:3);
+        
+        %----------------------------------------------------------------------------------_%
+        % test whether the temp-path intersect with the longest one
+        %test_result = lineSegmentIntersect([pos_of_quad,pos_of_targ],[temp_pos_of_quad, temp_pos_of_targ]);         
+        
+        
+        
+        test_result = lineSegmentIntersect(LR,[temp_pos_of_quad, temp_pos_of_targ]);
+        %-----------------------------------------------------------------------------------%
+        
+        % if intersection exist, change the target position
+        if(test_result.intAdjacencyMatrix == 1)
+            
+            
+            %temp_target = [temp_target; temp_path(2), test_result.intMatrixX, test_result.intMatrixY ];
+            route = [test_result.intMatrixX, test_result.intMatrixY] - temp_pos_of_quad;
+            
+            %target_list x and y changed according to the intersection point
+            target_list(temp_path(3),2) = test_result.intMatrixX - 2.*route(1)./norm(route);
+            target_list(temp_path(3),3) = test_result.intMatrixY - 2.*route(2)./norm(route);
+            
+            %recalculate the distance
+            waypoint(count,1) = pdist([temp_pos_of_quad; target_list(temp_path(3),2:3)]);
+            %modified the distance in waypoint variable
+            %waypoint(count,1) = norm([temp_pos_of_quad, target_list(temp_path(3),2:3)]);
+            any_intersection = 1;
+        else
+            test_result1 = lineSegmentIntersect(toppoint,[temp_pos_of_quad, temp_pos_of_targ]);
+            %temp_target = [temp_target; temp_path(2), test_result.intMatrixX, test_result.intMatrixY ];
+            route = [test_result1.intMatrixX, test_result1.intMatrixY] - temp_pos_of_quad;
+            if(test_result1.intAdjacencyMatrix == 1)
+            %target_list x and y changed according to the intersection point
+            target_list(temp_path(3),2) = test_result1.intMatrixX;
+            target_list(temp_path(3),3) = test_result1.intMatrixY;
+            
+            %recalculate the distance
+            waypoint(count,1) = pdist([temp_pos_of_quad; target_list(temp_path(3),2:3)]);
+            %modified the distance in waypoint variable
+            %waypoint(count,1) = norm([temp_pos_of_quad, target_list(temp_path(3),2:3)]);
+            any_intersection = 1;
+            end
+        end
+        
+        % if the path lays on the left hand side of the current longest path
+        if( (A.* temp_pos_of_quad(1) + B .* temp_pos_of_quad(2) + C) >= 0)
+        left_waypoint = [left_waypoint;waypoint(count,:)]
+        else
+        % if the path lays on the right hand side of the current longest
+        % path
+        right_waypoint = [right_waypoint; waypoint(count,:)]
+        end
+        
+    end
+    %waypoint = [longest_waypoint;left_waypoint;right_waypoint];
+    
+    
+    if(any_intersection == 1)
+    fprintf('intersection exists\n');
+    temp_target = [longest_path(2) pos_of_targ;Alterwaypoint(Exp_pos,left_waypoint,target_list);Alterwaypoint(Exp_pos,right_waypoint,target_list)]
+    else
+        fprintf('no intersection exists\n');
+        
+        for count = 1:size(waypoint,1)
+        temp_target = [temp_target ; waypoint(count,2), target_list(waypoint(count,3),2:3)];
+        end
+        temp_target
+    end
+
+    
+end
+

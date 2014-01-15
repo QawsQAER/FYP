@@ -1,0 +1,7 @@
+function [ waypoint ] = Path_PlanningV1( now_pos,now_vel,target_list )
+    
+    Exp_pos = CalculateE
+
+
+end
+

@@ -1,0 +1,21 @@
+function [temp_target] = Path_PlanningV2(now_pos,now_vel,target_list,delay);
+%UNTITLED Summary of this function goes here
+%   Detailed explanation goes here
+    Exp_pos = CalculateExpectPosition(now_pos,now_vel,delay);
+    Best_target = CalculateBestTarget(Exp_pos,target_list);
+    quadnum_targetX_targetY  = [];
+    %Re-orgnized the data into format [quadnum, target X coordiante , target Y coordinate]
+    for count = 1:size(waypoint,1)
+        quadnum_targetX_targetY = [quadnum_targetX_targetY;waypoint(count,1),target_list(waypoint(count,3),2),target_list(waypoint(count,3),3)];
+    end
+    
+    original_waypoint = Best_target;
+    new_waypoint = Alterwaypoint(Exp_pos,original_waypoint,target_list);
+    for count = 1:size(new_waypoint,1)
+        for count1 = 1:size(quadnum_targetX_targetY,1)
+            if(quadnum_targetX_targetY(count1,1) 
+        end
+    end
+    waypoint = new_waypoint;
+end
+
