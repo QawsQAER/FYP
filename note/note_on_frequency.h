@@ -1,7 +1,7 @@
 #define SPEED_OF_XBEE_MAC_LAYER 250 //Kbps
 #define THEO_FREQ_OF_32_MSG 968 //HZ
 #define THEO_TRANS_OF_32_MSG 1 //ms
-#define NUM_OF_32_MS_PS 1000 //number
+#define NUM_OF_32_MSG_PS 1000 //number
 #define THEO_TRANS_OF_64_MSG 2 //ms
 #define THEO_TRANS_OF_128_MSG 4 //ms
 
