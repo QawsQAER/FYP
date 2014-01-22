@@ -1,6 +1,17 @@
+#include "main.h"
 #ifndef _XBEE_H
 #define _XBEE_H
+
+#if _USE_MBED
+
 #include "mbed.h"
+
+#else
+
+#include <stdlib.h>
+
+#endif
+
 //#include "ADDRESS.h"
 
 

@@ -1,18 +1,19 @@
 #ifndef _SERIAL_H
 #define _SERIAL_H
+#include "main.h"
 #include <errno.h>
 #include <termios.h>
 #include <unistd.h>
 
-int
-set_interface_attribs (int fd, int speed, int parity)
+int set_interface_attribs (int fd, int speed, int parity)
 {
         struct termios tty;
         memset (&tty, 0, sizeof tty);
         if (tcgetattr (fd, &tty) != 0)
         {
-                error_message ("error %d from tcgetattr", errno);
-                return -1;
+                //error_message("error %d from tcgetattr", errno);
+                fprintf(stderr,"%s\n",strerror(errno));
+		return -1;
         }
 
         cfsetospeed (&tty, speed);
@@ -39,7 +40,7 @@ set_interface_attribs (int fd, int speed, int parity)
 
         if (tcsetattr (fd, TCSANOW, &tty) != 0)
         {
-                error_message ("error %d from tcsetattr", errno);
+                fprintf(stderr,"%s\n",strerror(errno));
                 return -1;
         }
         return 0;
@@ -52,7 +53,7 @@ set_blocking (int fd, int should_block)
         memset (&tty, 0, sizeof tty);
         if (tcgetattr (fd, &tty) != 0)
         {
-                error_message ("error %d from tggetattr", errno);
+                fprintf(stderr, "%s\n", strerror(errno));
                 return;
         }
 
@@ -60,15 +61,15 @@ set_blocking (int fd, int should_block)
         tty.c_cc[VTIME] = 5;            // 0.5 seconds read timeout
 
         if (tcsetattr (fd, TCSANOW, &tty) != 0)
-                error_message ("error %d setting term attributes", errno);
+                fprintf(stderr, "%s\n", strerror(errno));
 }
 
-
+/* EXAMPLE USAGE
 char *portname = "/dev/ttyUSB1"
 int fd = open (portname, O_RDWR | O_NOCTTY | O_SYNC);
 if (fd < 0)
 {
-        error_message ("error %d opening %s: %s", errno, portname, strerror (errno));
+        fprintf(stderr,"%s\n", strerror (errno));
         return;
 }
 
@@ -78,5 +79,5 @@ set_blocking (fd, 0);                // set no blocking
 write (fd, "hello!\n", 7);           // send 7 character greeting
 char buf [100];
 int n = read (fd, buf, sizeof buf);  // read up to 100 characters if ready to read
-
+*/
 #endif
