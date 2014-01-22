@@ -8,7 +8,7 @@
 
 static Serial pc(USBTX, USBRX);
  
-static Serial xbee_coor(TX_PIN, RX_PIN);
+//static Serial xbee_coor(TX_PIN, RX_PIN);
 
 void port_init();
 
