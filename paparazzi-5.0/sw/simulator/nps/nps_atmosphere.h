@@ -1,6 +1,0 @@
-#ifndef NPS_ATMOSPHERE_H
-#define NPS_ATMOSPHERE_H
-
-#endif /* NPS_ATMOSPHERE_H */
-
-
