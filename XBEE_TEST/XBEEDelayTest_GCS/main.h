@@ -20,4 +20,4 @@ typedef unsigned char uint8_t;
 //-------------------------------------------//
 
 #define KB 1024
-#define MB KB * Kb
+#define MB KB * KB

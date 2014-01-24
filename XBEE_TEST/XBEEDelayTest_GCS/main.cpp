@@ -11,12 +11,10 @@
 
 #endif
 
-#include "Xbee.h"
+#include "XBEE.h"
 
 
-Xbee xbee_coor(TX_PIN,RX_PIN);
-
-
+/*
 void Test1() //TESTING BROADCASTING 32 BYTE WITH 1 HZ
 {
         char message[32] = "123456789abcdef123456789abcdef";
@@ -26,14 +24,14 @@ void Test1() //TESTING BROADCASTING 32 BYTE WITH 1 HZ
             xbee_coor.transmit(0xff,message,strlen(message));
         }
 }
-
+*/
 
 int main(int agrc, char ** argv) 
 {
 
   while(1)
   {
-
+	XBEE xbee_coor(1,0x13a200,0x4099278a,0);
   }
   return 0;
 }    
