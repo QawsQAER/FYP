@@ -18,3 +18,6 @@ typedef short int16_t;
 typedef unsigned char uint8_t;
 #endif
 //-------------------------------------------//
+
+#define KB 1024
+#define MB KB * Kb

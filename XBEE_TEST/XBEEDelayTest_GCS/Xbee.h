@@ -7,8 +7,10 @@
 #include "mbed.h"
 
 #else
-
+#include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
+#include "Serial.h"
 
 #endif
 
@@ -18,11 +20,13 @@
 class Xbee
 {
     private:
-        Serial *port;
-        uint32_t Serial_Num;// the Serial number of current XBEE module;
+	int fd;// The file descriptor for the port.
+        uint32_t Serial_Num_HI;
+	uint32_t Serial_Num_LO;// the Serial number of current XBEE module;
         uint8_t ID;
+	uint8_t recv_buff[MB];
     public:
-        Xbee(PinName TX, PinName RX, uint32_t Serial_Num = 0x00000000, uint8_t ID = 0);
+        Xbee(int fd,uint32_t Serial_Num_HI = 0x00000000,uint32_t Serial_Num_LO = 0x0000ffff, uint8_t ID = 0);
         ~Xbee();
         void write(char *tran_buff,uint8_t size);
         void read(char * rece_buff,uint8_t size);

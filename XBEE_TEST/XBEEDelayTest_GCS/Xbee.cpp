@@ -1,36 +1,39 @@
 #include "Xbee.h"
 
 //CONSTRUCTOR
-Xbee::Xbee(PinName TX,PinName RX, uint32_t Serial_Num, uint8_t ID)
+Xbee::Xbee(int fd,uint32_t Serial_Num_HI, uint32_t Serial_Num_LO,  uint8_t ID)
 {
-    port = new Serial(TX,RX);
-    this->Serial_Num = Serial_Num;
-    this->ID = ID;
+	this->fd = fd;
+	this->Serial_Num_HI = Serial_Num_HI;
+	this->Serial_Num_LO = Serial_Num_LO;
+	this->ID = ID;
 }
 
 //DESTRUCTOR
 Xbee::~Xbee()
 {
-    free(port);
+	//for integrity
 }
 
 void Xbee::write(char *tran_buff,uint8_t size)
 {
-    uint8_t count = 0;
-    //PUTC VERSION
-    for(count = 0 ;count < size;count++)
-        port->putc(*(tran_buff + count));   
-    /*PRINTF VERSION
-    port->printf("%s",tran_buff)
-    */
+	uint8_t count = 0;
+	/*
+	for(count = 0 ;count < size;count++)
+	port->putc(*(tran_buff + count));
+	*/
+	write(fd,tran_buff,size); 
 }
 
 void Xbee::read(char * rece_buff,uint8_t size)
 {
-    uint8_t count = 0;
-    //GETC version
-    for(count = 0;count < size;count++)
+	uint8_t count = 0;
+	//GETC version
+	/*
+	for(count = 0;count < size;count++)
         *(rece_buff + count) = port->getc();
+	*/
+	read(fd,rece_buff,size);
 }
 
 void Xbee::transmit(uint8_t ID,char * tran_buff, uint8_t size)
