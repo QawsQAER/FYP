@@ -7,8 +7,12 @@
 #include "mbed.h"
 
 #else
+//for interaction with uer
 #include <stdio.h>
+
+//for memset() and uint8_t
 #include <stdlib.h>
+//for read() and write()
 #include <unistd.h>
 #include <queue>
 #include "XBEE_msg.h"
@@ -42,5 +46,7 @@ class XBEE
         void XBEE_set_baud(uint16_t baudrate);
 	void XBEE_read_into_recv_buff();
 	void XBEE_parse_XBEE_msg();
+	void XBEE_show_msg();
+	void XBEE_show_recv_buff();
 };
 #endif

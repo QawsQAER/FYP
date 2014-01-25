@@ -1,5 +1,6 @@
 #include "XBEE.h"
 
+
 //CONSTRUCTOR
 XBEE::XBEE(int fd,uint32_t Serial_Num_HI, uint32_t Serial_Num_LO,  uint8_t ID)
 {
@@ -7,6 +8,10 @@ XBEE::XBEE(int fd,uint32_t Serial_Num_HI, uint32_t Serial_Num_LO,  uint8_t ID)
 	this->Serial_Num_HI = Serial_Num_HI;
 	this->Serial_Num_LO = Serial_Num_LO;
 	this->ID = ID;
+	this->recv_pos = 0;
+	this->tran_pos = 0;
+	memset(recv_buff,0,XBEE_BUFF_SIZE);
+	memset(tran_buff,0,XBEE_BUFF_SIZE);
 }
 
 //DESTRUCTOR
@@ -17,7 +22,7 @@ XBEE::~XBEE()
 
 void XBEE::XBEE_write(uint8_t *tran_buff,uint8_t size)
 {
-	write(this->fd,(void *)tran_buff,size); 
+	my_write(this->fd,(void *)tran_buff,size); 
 }
 
 uint32_t XBEE::XBEE_read(uint8_t * rece_buff,uint32_t size)
@@ -48,23 +53,40 @@ void XBEE::XBEE_read_into_recv_buff()
 	this->recv_pos+=byte_count;
 }
 
+/*
+	This function parse the data currently in the recv buff into message
+*/
 void XBEE::XBEE_parse_XBEE_msg()
 {
-	uint32_t current = 0, offset_begin = 0;
+	//current is used to indicate the current position inside recv_buff
+	//offset_begin is used int indicate the current starting point of a message
+	uint32_t current = 0;// offset_begin = 0;
+
+	//frame_count is used to indicate the current position inside frame
+	uint16_t frame_count = 0;
 	uint8_t state = 0;
 	XBEE_msg * msg_p = NULL;
+	//uint8_t *framedata = NULL;
 	while(current < recv_pos)
 	{
 		switch(state)
 		{
 			case 0: //not yet detect a message
-				if(recv_buff[current] == 0x7E])
+			{
+				#if _DEBUG_XBEE_parse_XBEE_msg
+				printf("case0, current %d, recv_pos %d\n",current,recv_pos);
+				#endif
+				if(recv_buff[current] == START_BYTE)
 				{
 					if(msg_p == NULL)
 					{
 					//detect a new message
-					offset_begin = current;
+//					offset_begin = current;
 					msg_p = new XBEE_msg();
+					#if _DEBUG_XBEE_parse_XBEE_msg
+					printf("XBEE_parse_XBEE_msg(): new pointer %p\n",msg_p);
+					#endif
+					msg.push(msg_p);
 					//enter next state if a message is detected
 					state++;
 					}
@@ -73,23 +95,222 @@ void XBEE::XBEE_parse_XBEE_msg()
 						//0x7E inside a message
 						//TODO: define error code
 						msg_p->set_errorcode(0);
-						msg.push(msg_p);
+						//msg.push(msg_p);
 						msg_p = NULL;
 					}
+				}
+				current++;
+				while(current > recv_pos)
+					XBEE_read_into_recv_buff();
+				break;
+			}
+			case 1://reading length_HI
+			{
+				#if _DEBUG_XBEE_parse_XBEE_msg
+				printf("case1\n");
+				#endif
+				//handle escape character
+				if(recv_buff[current] == 0x7d)
+				{
+					while(current + 1 > recv_pos)
+					XBEE_read_into_recv_buff();
+					uint8_t data = recv_buff[++current];
+					data = data ^ 0x20;
+					msg_p->set_length_HI(data);
 					current++;
 				}
-				break;
-			case 1://reading length_HI
-				msg_p->set_length_HI(recv_buff[current++]);
+				else
+				{	//if not escape character
+					msg_p->set_length_HI(recv_buff[current++]);
+				}
 				//enter next state to read length_LO
+				while(current >= this->recv_pos)
+					XBEE_read_into_recv_buff();
 				state++;
+				break;
+			}	
+			case 2://reading length_LO
+			{
+				#if _DEBUG_XBEE_parse_XBEE_msg
+				printf("case2\n");
+				#endif
+				if(recv_buff[current] == 0x7d)
+				{//if escape character
+					while(current + 1 > recv_pos)
+					XBEE_read_into_recv_buff();
+					uint8_t data = recv_buff[++current];
+					data = data ^ 0x20;
+					msg_p->set_length_LO(data);
+					current++;
+				}
+				else
+				{//if not escape character
+					msg_p->set_length_LO(recv_buff[current++]);
+				}
+				msg_p->set_frame_length();
+				while(current >= this->recv_pos)
+					this->XBEE_read_into_recv_buff();
+				//enter next state
+				state++;
+				break;
+			}
+			case 3://FRAME TYPE
+			{	
+
+				//allocate memory for frame data storage
+				uint8_t *temp =new uint8_t[msg_p->get_frame_length()];
+				msg_p->set_frameptr(temp);
+				#if _DEBUG_XBEE_parse_XBEE_msg
+				printf("case3\n");
+				printf("msg_p->get_frame_length() %d\n",msg_p->get_frame_length());
+				printf("frameptr: [%p]\n",temp);
+				#endif
+				if(recv_buff[current] == 0x7d)
+				{	//if escape character
+					while(current + 1 > recv_pos)
+					XBEE_read_into_recv_buff();
+					uint8_t data = recv_buff[++current];
+					//printf("detect escape, original is [%x], changed into",data);
+					data = data ^ 0x20;
+					//printf(" [%x]\n",data);
+					*(temp + frame_count) = data;
+					msg_p->set_API_type(data);
+					current++;
+				}
+				else
+				{	//if not escape character			
+					*(temp + frame_count) = recv_buff[current];
+;					msg_p->set_API_type(recv_buff[current++]);
+				}
+				frame_count++;
+				while(current >= this->recv_pos)
+					this->XBEE_read_into_recv_buff();
+				state++;
+				break;
+			}
+			case 4://FRAME DATA
+			{
+				#if _DEBUG_XBEE_parse_XBEE_msg
+				printf("case4\n");
+				#endif
+				uint8_t *ptr = msg_p->get_frameptr();
+				while(frame_count < msg_p->get_frame_length() && current < recv_pos)
+				{
+					if(recv_buff[current] == 0x7d)
+					{	//if escape character
+						msg_p->detect_esc();
+						while(current + 1 > recv_pos)
+							XBEE_read_into_recv_buff();
+						uint8_t data = recv_buff[++current];
+						//printf("detect escape, original is [%x], changed into",data);
+						data = data ^ 0x20;
+						//printf(" [%x]\n",data);
+						#if _DEBUG_XBEE_parse_XBEE_msg
+						printf("loading %x into %d [%p]\n",data,frame_count,ptr + frame_count);
+						#endif
+						*(ptr + frame_count++) = data;
+						current++;
+					}
+					else
+					{
+						#if _DEBUG_XBEE_parse_XBEE_msg
+						printf("loading %x into %d [%p]\n",recv_buff[current],frame_count,ptr+frame_count);
+						#endif
+						*(ptr + frame_count++) = recv_buff[current++];	
+					}
+					
+					if(current >= recv_pos)
+					{
+						//TODO: handle the case that the framedata is not completely read
+						//into the recv_buff
+						fprintf(stderr,"XBEE_ERROR: the framedata is not fully read\n");
+						while(current >= this->recv_pos)
+							this->XBEE_read_into_recv_buff();
+						//continue;					
+						//return ;
+					}
+				}
+				state++;
+				break;
+			}
+			case 5://CheckSum
+			{
+				#if _DEBUG_XBEE_parse_XBEE_msg
+				printf("case5\n");
+				#endif
+				if(recv_buff[current] == 0x7D)
+				{
+					//if escape character
+					while(current + 1 > recv_pos)
+						XBEE_read_into_recv_buff();
+					uint8_t data = recv_buff[++current];
+					data = data ^ 0x20;
+					msg_p->set_recv_CheckSum(data);
+				}
+				else
+				{msg_p->set_recv_CheckSum(recv_buff[current++]);}	
+				//Reset all parameters and ready to read the next message
+				state = 0;
+				msg_p = NULL;
+				frame_count = 0;
 				break;	
+			}
+			default:
+			{
+				fprintf(stderr,"XBEE_ERROR: unexpeced error\n");
+				return ;
+			}
 		}	
+	}
+	//if(state == 2)
+	memset(recv_buff,0,recv_pos + 1);
+	recv_pos = 0;
+}
+
+void XBEE::XBEE_show_msg()
+{
+	XBEE_msg * ptr = NULL;
+	while(!msg.empty())
+	{
+		ptr = msg.front();
+		
+		msg.pop();
+		//ptr->show_hex();
+		uint16_t length = ptr->get_recv_packet_data_length();
+		uint8_t *data_ptr = ptr->get_recv_packet_data_ptr();
+		uint8_t *str = new uint8_t[length + 1];
+		#if _DEBUG
+		printf("XBEE_show_msg() deleting ptr %p\n",ptr);
+		printf("data begin at %p, length is %d\n",data_ptr,ptr->get_recv_packet_data_length());
+		#endif
+		
+		uint64_t address = ptr->get_recv_source_addr();
+		//printf("address is %x\n",address);
+		uint32_t address_hi;
+		uint32_t address_lo;
+		memcpy(&address_hi,(char *)&address,sizeof(uint32_t));
+		memcpy(&address_lo,(char *)&address + sizeof(uint32_t),sizeof(uint32_t));
+		printf("Message From [0x%08x 0x%08x]:\n",address_hi,address_lo);
+		memcpy(str,data_ptr,length);
+		str[length] = '\0';
+		printf("\"%s\"\n",str);
+		delete str;
+		
+	
+		delete ptr;
 	}
 }
 
-
-
+void XBEE::XBEE_show_recv_buff()
+{
+	uint32_t count = 0;
+	printf("\nXBEE->recv_buff:\n");
+	while(count < recv_pos)
+	{
+		printf("%x ", *(recv_buff + count));
+	}
+	printf("\n");
+}
 
 
 
