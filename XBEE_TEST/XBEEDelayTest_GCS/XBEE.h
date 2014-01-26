@@ -48,5 +48,7 @@ class XBEE
 	void XBEE_parse_XBEE_msg();
 	void XBEE_show_msg();
 	void XBEE_show_recv_buff();
+	
+	void XBEE_send_msg(XBEE_msg &msg);
 };
 #endif

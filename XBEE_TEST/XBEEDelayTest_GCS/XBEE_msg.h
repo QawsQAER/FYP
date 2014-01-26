@@ -1,7 +1,10 @@
 #include "main.h"
 
 #define START_BYTE 0x7E
-
+#define ESC_BYTE 0x7D
+#define XON_BYTE 0x11
+#define XOFF_BYTE 0x13
+#define XOR_BYTE 0x20
 /*---------MACRO FOR XBEE receive RF packet----------------
 -----------------------------------------------------------
 -----------------------------------------------------------*/
@@ -51,7 +54,15 @@ class XBEE_msg
 		uint64_t get_recv_source_addr();
 		uint16_t get_recv_source_net_addr();
 		uint8_t get_recv_option();
-		
+		bool verify_CheckSum();
+
+
+		/*
+			The following functions are defined for message
+			sending out.
+		*/
+		uint32_t get_length_HI();
+		uint32_t get_length_LO();		
 };
 
 

@@ -54,18 +54,25 @@ void XBEE_msg::set_CheckSum()
 	printf("Checksum would be [%x]",ck);
 	_CheckSum = ck;
 }
-/*
+
 //THIS FUNCTION IS FOR RECEIVED PACKET TO VERIFY THE CHECKSUM
 bool XBEE_msg::verify_CheckSum()
 {
+	//printf("Verifing CheckSum\n");
 	uint32_t sum = 0;
+	uint16_t count = 0;
 	for(count = 0;count <= frame_length;count++)
 	{sum+=*(_frameptr + count);}
 	sum+=_recv_CheckSum;
 	uint8_t lsb = (sum << (sizeof(uint32_t) - sizeof(uint8_t))) >> (sizeof(uint32_t) - sizeof(uint8_t));
+	#if _DEBUG_VERIFY_CHECKSUM
+	if(lsb != 0xff)
+	printf("Error: CheckSum received incorrect!\n");
+	else if(lsb == 0xff)
+	printf("CheckSum Correct\n");
+	#endif
 	return (lsb == 0xff);	
 }
-*/
 uint8_t XBEE_msg::get_CheckSum()
 {return _CheckSum;}
 
@@ -138,6 +145,11 @@ uint8_t XBEE_msg::get_recv_option()
 void XBEE_msg::detect_esc()
 {frame_length--;}
 
+uint32_t get_length_HI()
+{return _length_HI;}
+
+uint32_t get_length_LO()
+{return _length_LO;}
 
 
 
