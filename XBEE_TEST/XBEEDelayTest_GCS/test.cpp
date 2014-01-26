@@ -44,10 +44,13 @@ int main(int argc, char ** argv)
 		//scanf("%s",dummy);
 		//sleep for 5s
 		//printf("\n\nSLEEPING\n");
-		//sleep(5);
+		sleep(5);
 		//printf("1.READING\n");
 		xbee_coor.XBEE_read_into_recv_buff();
 		//printf("2.PARSING\n");
+		printf("-----------------------\n");
+		xbee_coor.XBEE_show_recv_buff();
+		printf("-----------------------\n");
 		xbee_coor.XBEE_parse_XBEE_msg();
 		//printf("3.SHOWING\n");
 		xbee_coor.XBEE_show_msg();	

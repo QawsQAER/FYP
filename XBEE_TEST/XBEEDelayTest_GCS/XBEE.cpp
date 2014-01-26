@@ -158,7 +158,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 			{	
 
 				//allocate memory for frame data storage
-				uint8_t *temp =new uint8_t[msg_p->get_frame_length()];
+				uint8_t *temp =new uint8_t[msg_p->get_frame_length() + 1];
 				msg_p->set_frameptr(temp);
 				#if _DEBUG_XBEE_parse_XBEE_msg
 				printf("case3\n");
@@ -194,7 +194,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 				printf("case4\n");
 				#endif
 				uint8_t *ptr = msg_p->get_frameptr();
-				while(frame_count < msg_p->get_frame_length() && current < recv_pos)
+				while(frame_count <= msg_p->get_frame_length() && current < recv_pos)
 				{
 					if(recv_buff[current] == 0x7d)
 					{	//if escape character
@@ -206,7 +206,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 						data = data ^ 0x20;
 						//printf(" [%x]\n",data);
 						#if _DEBUG_XBEE_parse_XBEE_msg
-						printf("loading %x into %d [%p]\n",data,frame_count,ptr + frame_count);
+						printf("loading %x into %d [%p],framelength %d\n",data,frame_count,ptr + frame_count,msg_p->get_frame_length());
 						#endif
 						*(ptr + frame_count++) = data;
 						current++;
@@ -214,7 +214,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 					else
 					{
 						#if _DEBUG_XBEE_parse_XBEE_msg
-						printf("loading %x into %d [%p]\n",recv_buff[current],frame_count,ptr+frame_count);
+						printf("loading %x into %d [%p],framelength %d\n",recv_buff[current],frame_count,ptr+frame_count,msg_p->get_frame_length());
 						#endif
 						*(ptr + frame_count++) = recv_buff[current++];	
 					}
@@ -236,7 +236,8 @@ void XBEE::XBEE_parse_XBEE_msg()
 			case 5://CheckSum
 			{
 				#if _DEBUG_XBEE_parse_XBEE_msg
-				printf("case5\n");
+				printf("case5, checksum would be [%x]\n",recv_buff[current]);
+				printf("framelength is %d\n",msg_p->get_frame_length());
 				#endif
 				if(recv_buff[current] == 0x7D)
 				{
@@ -251,6 +252,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 				{msg_p->set_recv_CheckSum(recv_buff[current++]);}	
 				//Reset all parameters and ready to read the next message
 				state = 0;
+				msg_p->set_CheckSum();
 				msg_p = NULL;
 				frame_count = 0;
 				break;	
@@ -275,7 +277,7 @@ void XBEE::XBEE_show_msg()
 		ptr = msg.front();
 		
 		msg.pop();
-		//ptr->show_hex();
+		ptr->show_hex();
 		uint16_t length = ptr->get_recv_packet_data_length();
 		uint8_t *data_ptr = ptr->get_recv_packet_data_ptr();
 		uint8_t *str = new uint8_t[length + 1];
@@ -283,7 +285,7 @@ void XBEE::XBEE_show_msg()
 		printf("XBEE_show_msg() deleting ptr %p\n",ptr);
 		printf("data begin at %p, length is %d\n",data_ptr,ptr->get_recv_packet_data_length());
 		#endif
-		
+			
 		uint64_t address = ptr->get_recv_source_addr();
 		//printf("address is %x\n",address);
 		uint32_t address_hi;
@@ -292,7 +294,7 @@ void XBEE::XBEE_show_msg()
 		memcpy(&address_lo,(char *)&address + sizeof(uint32_t),sizeof(uint32_t));
 		printf("Message From [0x%08x 0x%08x]:\n",address_hi,address_lo);
 		memcpy(str,data_ptr,length);
-		str[length] = '\0';
+		//str[length] = '\0';
 		printf("\"%s\"\n",str);
 		delete str;
 		
@@ -304,10 +306,10 @@ void XBEE::XBEE_show_msg()
 void XBEE::XBEE_show_recv_buff()
 {
 	uint32_t count = 0;
-	printf("\nXBEE->recv_buff:\n");
+	printf("XBEE->recv_buff:\n");
 	while(count < recv_pos)
 	{
-		printf("%x ", *(recv_buff + count));
+		printf("%x ", *(recv_buff + count++));
 	}
 	printf("\n");
 }

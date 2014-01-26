@@ -1,7 +1,8 @@
 CC = g++
-CFLAGS = -Wall -g 
-MACRO = #-D_DEBUG_XBEE_parse_XBEE_msg=1 -D_DEBUG=1
-all: main
+CFLAGS = -Wall -g
+MACRO = -D_DEBUG_CHECKSUM=1 -D_DEBUG_XBEE_parse_XBEE_msg=1 -D_DEBUG=1
+TARGETS= main test
+all: main test
 	rm -f *.o	
 
 main: main.o XBEE.o Serial.o 
@@ -22,4 +23,5 @@ Serial.o: Serial.h Serial.cpp
 	$(CC) -o Serial.o -c Serial.cpp $(CFLAGS) $(MACRO)
 
 clean:
+	rm -f $(TARGETS)
 	rm -f *.o

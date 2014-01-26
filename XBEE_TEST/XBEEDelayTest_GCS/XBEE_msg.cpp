@@ -35,6 +35,16 @@ uint8_t * XBEE_msg::get_frameptr()
 //TODO implement this checksum algorithm
 void XBEE_msg::set_CheckSum()
 {
+	uint8_t ck = 0;
+	uint16_t count = 0;
+	for(count = 0;count <= frame_length;count++)
+	{
+		ck+=*(_frameptr + count);
+		#if _DEBUG_CHECKSUM
+		printf("At count [%d], add [%x] ck is [%x], recv_ck is [%x]\n",count,*(_frameptr + count),ck,_recv_CheckSum);
+		#endif
+	}
+	_CheckSum = ck;
 }
 
 uint8_t XBEE_msg::get_CheckSum()
@@ -61,7 +71,7 @@ void XBEE_msg::show_hex()
 	printf("%x ", _length_HI);
 	printf("%x ", _length_LO);
 	uint16_t count = 0;
-	while(count < frame_length)
+	while(count <= frame_length)
 		printf("%x ",*(_frameptr + count++));
 	printf("\n");	
 
@@ -78,7 +88,7 @@ uint8_t* XBEE_msg::get_recv_packet_data_ptr()
 {return (_frameptr + FRAME_RECV_DATA_OFFSET);}
 
 uint16_t XBEE_msg::get_recv_packet_data_length()
-{return (frame_length - FRAME_RECV_DATA_OFFSET);}
+{return (frame_length - FRAME_RECV_DATA_OFFSET + 1);}
 
 uint64_t XBEE_msg::get_recv_source_addr()
 {
