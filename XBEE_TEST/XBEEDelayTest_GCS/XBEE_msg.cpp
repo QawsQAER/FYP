@@ -33,20 +33,39 @@ uint8_t * XBEE_msg::get_frameptr()
 {return _frameptr;}
 
 //TODO implement this checksum algorithm
+//Calculating the Checksum of an API Packet
+//http://www.digi.com/support/kbase/kbaseresultdetl?id=2206
 void XBEE_msg::set_CheckSum()
 {
+	uint8_t sum = 0;
 	uint8_t ck = 0;
 	uint16_t count = 0;
 	for(count = 0;count <= frame_length;count++)
 	{
-		ck+=*(_frameptr + count);
-		#if _DEBUG_CHECKSUM
-		printf("At count [%d], add [%x] ck is [%x], recv_ck is [%x]\n",count,*(_frameptr + count),ck,_recv_CheckSum);
-		#endif
+		sum+=*(_frameptr + count);
+		//#if _DEBUG_CHECKSUM
+		//printf("At count [%d], add [%x] ck is [%x], recv_ck is [%x]\n",count,*(_frameptr + count),ck,_recv_CheckSum);
+		//#endif
 	}
+	//make ck the LSB of the sum
+	ck = (sum << (sizeof(uint32_t) - sizeof(uint8_t))) >> (sizeof(uint32_t)- sizeof(uint8_t));
+	//subtract ck from 0xff to get the final checksum 
+	ck = 0xff - ck;
+	printf("Checksum would be [%x]",ck);
 	_CheckSum = ck;
 }
-
+/*
+//THIS FUNCTION IS FOR RECEIVED PACKET TO VERIFY THE CHECKSUM
+bool XBEE_msg::verify_CheckSum()
+{
+	uint32_t sum = 0;
+	for(count = 0;count <= frame_length;count++)
+	{sum+=*(_frameptr + count);}
+	sum+=_recv_CheckSum;
+	uint8_t lsb = (sum << (sizeof(uint32_t) - sizeof(uint8_t))) >> (sizeof(uint32_t) - sizeof(uint8_t));
+	return (lsb == 0xff);	
+}
+*/
 uint8_t XBEE_msg::get_CheckSum()
 {return _CheckSum;}
 
