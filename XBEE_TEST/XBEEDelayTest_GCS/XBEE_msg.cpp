@@ -37,21 +37,21 @@ uint8_t * XBEE_msg::get_frameptr()
 //http://www.digi.com/support/kbase/kbaseresultdetl?id=2206
 void XBEE_msg::set_CheckSum()
 {
-	uint8_t sum = 0;
+	uint32_t sum = 0;
 	uint8_t ck = 0;
 	uint16_t count = 0;
 	for(count = 0;count <= frame_length;count++)
 	{
 		sum+=*(_frameptr + count);
-		//#if _DEBUG_CHECKSUM
-		//printf("At count [%d], add [%x] ck is [%x], recv_ck is [%x]\n",count,*(_frameptr + count),ck,_recv_CheckSum);
-		//#endif
+		#if _DEBUG_CHECKSUM
+		printf("At count [%d], add [%x] sum is [%x], recv_ck is [%x]\n",count,*(_frameptr + count),sum,_recv_CheckSum);
+		#endif
 	}
 	//make ck the LSB of the sum
-	ck = (sum << (sizeof(uint32_t) - sizeof(uint8_t))) >> (sizeof(uint32_t)- sizeof(uint8_t));
+	ck = (sum << 24) >> 24;
 	//subtract ck from 0xff to get the final checksum 
 	ck = 0xff - ck;
-	printf("Checksum would be [%x]",ck);
+	//printf("Checksum would be [%x]",ck);
 	_CheckSum = ck;
 }
 
@@ -64,7 +64,7 @@ bool XBEE_msg::verify_CheckSum()
 	for(count = 0;count <= frame_length;count++)
 	{sum+=*(_frameptr + count);}
 	sum+=_recv_CheckSum;
-	uint8_t lsb = (sum << (sizeof(uint32_t) - sizeof(uint8_t))) >> (sizeof(uint32_t) - sizeof(uint8_t));
+	uint8_t lsb = (sum << 8 * (sizeof(uint32_t) - sizeof(uint8_t))) >> 8 * (sizeof(uint32_t) - sizeof(uint8_t));
 	#if _DEBUG_VERIFY_CHECKSUM
 	this->set_CheckSum();
 	printf("get_CheckSum() return %x\n",this->get_CheckSum());
@@ -153,22 +153,60 @@ uint32_t XBEE_msg::get_length_HI()
 uint32_t XBEE_msg::get_length_LO()
 {return _length_LO;}
 
-void XBEE_msg::set_dest_addr_HI(const uint32_t &ADDR_HI)
+void XBEE_msg::set_tran_dest_addr_HI(const uint32_t &ADDR_HI)
 {
 	//for little endian
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET) = (ADDR_HI << 24) >> 24;
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 1) = (ADDR_HI << 16) >> 24;
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 2) = (ADDR_HI << 8) >> 24;
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 3) = (ADDR_HI << 0) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET) = (ADDR_HI << 0) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 1) = (ADDR_HI << 8) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 2) = (ADDR_HI << 16) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 3) = (ADDR_HI << 24) >> 24;
 }
 	
-void XBEE_msg::set_dest_addr_LO(const uint32_t &ADDR_LO)
+void XBEE_msg::set_tran_dest_addr_LO(const uint32_t &ADDR_LO)
 {
 	//for little endian
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 4) = (ADDR_LO << 24) >> 24;
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 5) = (ADDR_LO << 16) >> 24;
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 6) = (ADDR_LO << 8) >> 24;
-	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 7) = (ADDR_LO << 0) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 4) = (ADDR_LO << 0) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 5) = (ADDR_LO << 8) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 6) = (ADDR_LO << 16) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 7) = (ADDR_LO << 24) >> 24;
+}
+
+void XBEE_msg::set_tran_net_dest_addr_HI(const uint8_t &NET_ADDR_HI)
+{*(_frameptr + FRAME_TRAN_NET_ADDR_OFFSET) = NET_ADDR_HI;}
+
+void XBEE_msg::set_tran_net_dest_addr_LO(const uint8_t &NET_ADDR_LO)
+{*(_frameptr + FRAME_TRAN_NET_ADDR_OFFSET + 1) = NET_ADDR_LO;}
+void XBEE_msg::set_tran_frame_id(const uint8_t &frame_id)
+{*(_frameptr + FRAME_TRAN_ID_OFFSET) = frame_id;}
+
+void XBEE_msg::set_tran_data(const uint8_t *data, const uint16_t &size)
+{memcpy(_frameptr + FRAME_TRAN_DATA_OFFSET,data,size);}
+
+void XBEE_msg::set_tran_radius(const uint8_t &radius)
+{*(_frameptr + FRAME_TRAN_RADIUS_OFFSET) = radius;}
+
+void XBEE_msg::set_tran_option(const uint8_t &option)
+{*(_frameptr + FRAME_TRAN_OPTION_OFFSET) = option;}
+
+void XBEE_msg::set_tran_packet(const uint32_t &ADDR_HI,const uint32_t &ADDR_LO,const uint8_t &NET_ADDR_HI, const uint8_t &NET_ADDR_LO,const uint8_t *data, const uint16_t &size)
+{
+	*(_frameptr) = 0x10;
+	this->set_tran_frame_id(0);
+	this->set_tran_dest_addr_HI(ADDR_HI);
+	this->set_tran_dest_addr_LO(ADDR_LO);
+	this->set_tran_net_dest_addr_HI(NET_ADDR_HI);
+	this->set_tran_net_dest_addr_LO(NET_ADDR_LO);
+	this->set_tran_radius(0);
+	this->set_tran_option(0);
+	this->set_tran_data(data,size);
+	//this->set_CheckSum();
+	uint16_t length = FRAME_TRAN_DATA_OFFSET + size;
+	_length_HI = length >> 8;
+	_length_LO = (length << 8 )>> 8;
+	this->set_frame_length();
+	this->set_CheckSum();
+	printf("get_CheskSum() %x\n",this->get_CheckSum());
+	
 }
 
 

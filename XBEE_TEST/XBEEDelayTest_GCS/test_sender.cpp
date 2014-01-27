@@ -41,8 +41,8 @@ int main(int argc, char ** argv)
 	//char dummy[32];
 	const char data[] = "hello A!";  
 	uint8_t *frameptr = new uint8_t[512];
-	uint32_t addr_hi = 0x00a21300;
-	uint32_t addr_lo = 0x8a279c40;
+	uint32_t addr_hi = 0x0013a200;
+	uint32_t addr_lo = 0x409c278a;
 	uint8_t net_addr_hi = 0xFF;
 	uint8_t net_addr_lo = 0xFE;
 	uint8_t radius = 0x00;
@@ -50,36 +50,39 @@ int main(int argc, char ** argv)
 	XBEE_msg msg;
         msg.set_frameptr(frameptr);
 	*(frameptr) = 0x10;
-	//frame_id 
 	*(frameptr + 1) = 0x00;
-	//addr_hi 
-	//memcpy((frameptr + 2),&addr_hi,4);
-	msg.set_dest_addr_HI(addr_hi);	
-	//addr_lo
-	//memcpy((frameptr + 2 + 4),&addr_lo,4);
-	msg.set_dest_addr_LO(addr_lo);
-	//net_addr_hi
-	memcpy((frameptr + 2 + 8),&net_addr_hi,1);
-	memcpy((frameptr + 2 + 9),&net_addr_lo,1);
-	//radius
-	memcpy((frameptr + 2 + 10),&radius,1);
-	//option
-	memcpy((frameptr + 2 + 11),&option,1);		
-	strcpy((char *) (frameptr) + (2 + 12),data);
-	uint8_t length_hi = 0;
-	uint8_t length_lo = (14 + strlen(data) + 1);
+	msg.set_tran_dest_addr_HI(addr_hi);
+	msg.set_tran_dest_addr_LO(addr_lo);
+	msg.set_tran_net_dest_addr_HI(net_addr_hi);
+	msg.set_tran_net_dest_addr_LO(net_addr_lo);
+	msg.set_tran_radius(radius);
+	msg.set_tran_option(option);
+	msg.set_tran_data((uint8_t *)data,strlen(data) + 1);
+	uint16_t length = (14 + strlen(data) + 1);
+	uint8_t length_hi = length >> 8;
+	uint8_t length_lo = (length << 8 ) >> 8;
 	printf("length_lo is %d\n",length_lo);
 	msg.set_length_HI(length_hi);
 	msg.set_length_LO(length_lo);
 	msg.set_frame_length();
 	printf("length should be %d\n",msg.get_frame_length());
 	msg.set_CheckSum();
-	msg.show_hex();	
+	printf("msg :");
+	msg.show_hex();
+	
+	XBEE_msg msg1;
+	msg1.set_frameptr(new uint8_t[512]);
+	char data2[] = "???";
+	msg1.set_tran_packet(addr_hi,addr_lo,net_addr_hi,net_addr_lo,(uint8_t *)data2,strlen(data2) + 1);
+	printf("msg1:");
+	msg1.show_hex();	
 	while(1)
 	{
 		sleep(2);
 		//msg.show_hex();
 		xbee_coor.XBEE_send_msg(msg);
+		sleep(1);
+		xbee_coor.XBEE_send_msg(msg1);
 	}
 	return 0;
 }

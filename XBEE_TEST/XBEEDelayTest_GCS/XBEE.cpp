@@ -26,9 +26,9 @@ void XBEE::XBEE_write(uint8_t *tran_buff,uint8_t size)
 	while(byte_count < size)
 	{
 		byte_count += my_write(this->fd,(void *) (tran_buff + byte_count),size - byte_count);
-		printf("byte_count %d\n",byte_count);
+		//printf("byte_count %d\n",byte_count);
 	}
-	printf("written\n");
+	//printf("written\n");
 	memset(tran_buff,0,byte_count);
 	tran_pos = 0; 
 }
@@ -275,7 +275,12 @@ void XBEE::XBEE_parse_XBEE_msg()
 				{msg_p->set_recv_CheckSum(recv_buff[current++]);}	
 				//Reset all parameters and ready to read the next message
 				state = 0;
-				msg_p->verify_CheckSum();
+				#if _DEBUG_CHECKSUM
+				if(!msg_p->verify_CheckSum())
+				printf("Checksum error\n");
+				else
+				printf("CheckSum Correct\n");
+				#endif
 				//msg_p->set_CheckSum();
 				msg_p = NULL;
 				frame_count = 0;

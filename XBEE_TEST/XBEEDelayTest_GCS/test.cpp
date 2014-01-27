@@ -1,9 +1,12 @@
+/*
 #include <stdlib.h>
 #include <stdio.h>
 #include <string>
 //for O_RDWR, O_NOCITTY, O_SYNC those MACRO
 #include <fcntl.h>
 #include "Serial.h"
+*/
+#include "main.h"
 #include "XBEE.h"
 
 int main(int argc, char ** argv)
@@ -51,6 +54,7 @@ int main(int argc, char ** argv)
 		printf("-----------------------\n");
 		xbee_coor.XBEE_show_recv_buff();
 		printf("-----------------------\n");
+
 		xbee_coor.XBEE_parse_XBEE_msg();
 		//printf("3.SHOWING\n");
 		xbee_coor.XBEE_show_msg();	

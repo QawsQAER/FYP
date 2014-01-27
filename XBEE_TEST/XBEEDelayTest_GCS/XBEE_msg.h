@@ -72,9 +72,15 @@ class XBEE_msg
 		*/
 		uint32_t get_length_HI();
 		uint32_t get_length_LO();
-		void set_dest_addr_HI(const uint32_t &ADDR_HI);
-		void set_dest_addr_LO(const uint32_t &ADDR_LO);
-		void set_frame_id(uint8_t frame_id);		
+		void set_tran_packet(const uint32_t &ADDR_HI,const uint32_t &ADDR_LO,const uint8_t &NET_ADDR_HI, const uint8_t &NET_ADDR_LO,const uint8_t *data, const uint16_t &size);
+		void set_tran_dest_addr_HI(const uint32_t &ADDR_HI);
+		void set_tran_dest_addr_LO(const uint32_t &ADDR_LO);
+		void set_tran_net_dest_addr_HI(const uint8_t &NET_ADDR_HI);
+		void set_tran_net_dest_addr_LO(const uint8_t &NET_ADDR_LO);
+		void set_tran_frame_id(const uint8_t &frame_id);
+		void set_tran_radius(const uint8_t &radius);
+		void set_tran_option(const uint8_t &option);
+		void set_tran_data(const uint8_t *data,const uint16_t &size);		
 };
 
 
