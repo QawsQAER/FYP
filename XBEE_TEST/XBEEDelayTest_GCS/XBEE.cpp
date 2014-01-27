@@ -22,7 +22,15 @@ XBEE::~XBEE()
 //TODO possible software flow control
 void XBEE::XBEE_write(uint8_t *tran_buff,uint8_t size)
 {
-	my_write(this->fd,(void *)tran_buff,size); 
+	uint16_t byte_count = 0;
+	while(byte_count < size)
+	{
+		byte_count += my_write(this->fd,(void *) (tran_buff + byte_count),size - byte_count);
+		printf("byte_count %d\n",byte_count);
+	}
+	printf("written\n");
+	memset(tran_buff,0,byte_count);
+	tran_pos = 0; 
 }
 //TODO possible software flow control
 uint32_t XBEE::XBEE_read(uint8_t * rece_buff,uint32_t size)
@@ -110,6 +118,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 				printf("case1\n");
 				#endif
 				//handle escape character
+				#if _USE_XBEE_ESC
 				if(recv_buff[current] == 0x7d)
 				{
 					while(current + 1 > recv_pos)
@@ -120,6 +129,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 					current++;
 				}
 				else
+				#endif
 				{	//if not escape character
 					msg_p->set_length_HI(recv_buff[current++]);
 				}
@@ -134,6 +144,8 @@ void XBEE::XBEE_parse_XBEE_msg()
 				#if _DEBUG_XBEE_parse_XBEE_msg
 				printf("case2\n");
 				#endif
+				
+				#if _USE_XBEE_ESC
 				if(recv_buff[current] == 0x7d)
 				{//if escape character
 					while(current + 1 > recv_pos)
@@ -144,6 +156,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 					current++;
 				}
 				else
+				#endif
 				{//if not escape character
 					msg_p->set_length_LO(recv_buff[current++]);
 				}
@@ -165,6 +178,8 @@ void XBEE::XBEE_parse_XBEE_msg()
 				printf("msg_p->get_frame_length() %d\n",msg_p->get_frame_length());
 				printf("frameptr: [%p]\n",temp);
 				#endif
+			
+				#if _USE_XBEE_ESC
 				if(recv_buff[current] == 0x7d)
 				{	//if escape character
 					while(current + 1 > recv_pos)
@@ -178,6 +193,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 					current++;
 				}
 				else
+				#endif
 				{	//if not escape character			
 					*(temp + frame_count) = recv_buff[current];
 ;					msg_p->set_API_type(recv_buff[current++]);
@@ -194,8 +210,10 @@ void XBEE::XBEE_parse_XBEE_msg()
 				printf("case4\n");
 				#endif
 				uint8_t *ptr = msg_p->get_frameptr();
-				while(frame_count <= msg_p->get_frame_length() && current < recv_pos)
+				//????????POSSIBLE BUGS HERE
+				while(frame_count < msg_p->get_frame_length() && current < recv_pos)
 				{
+					#if _USE_XBEE_ESC
 					if(recv_buff[current] == 0x7d)
 					{	//if escape character
 						msg_p->detect_esc();
@@ -212,6 +230,7 @@ void XBEE::XBEE_parse_XBEE_msg()
 						current++;
 					}
 					else
+					#endif
 					{
 						#if _DEBUG_XBEE_parse_XBEE_msg
 						printf("loading %x into %d [%p],framelength %d\n",recv_buff[current],frame_count,ptr+frame_count,msg_p->get_frame_length());
@@ -239,6 +258,8 @@ void XBEE::XBEE_parse_XBEE_msg()
 				printf("case5, checksum would be [%x]\n",recv_buff[current]);
 				printf("framelength is %d\n",msg_p->get_frame_length());
 				#endif
+				
+				#if _USE_XBEE_ESC
 				if(recv_buff[current] == 0x7D)
 				{
 					//if escape character
@@ -249,6 +270,8 @@ void XBEE::XBEE_parse_XBEE_msg()
 					msg_p->set_recv_CheckSum(data);
 				}
 				else
+				#endif
+				
 				{msg_p->set_recv_CheckSum(recv_buff[current++]);}	
 				//Reset all parameters and ready to read the next message
 				state = 0;
@@ -322,38 +345,75 @@ TODO handle escape character.
 TODO increase the length record in the tran_buff when a escape character is detected
 TODO when writing the frame data into the tran_buff, also remember the couting of data written into the tran_buff should be affected (not simply count++)	
 */	
-void XBEE:XBEE_send_msg(XBEE_msg &msg)
+void XBEE::XBEE_send_msg(XBEE_msg &msg)
 {
 	uint8_t state = 0;
 	uint8_t data = 0;
-	while(tran_pos < XBEE_BUFF_SIZE)
-	{	
+	while(state < 5)
+	{
 		switch(state)
 		{
 		case (0):
-		{
+			{
 			tran_buff[tran_pos++] = START_BYTE;
 			state++;
 			break;
-		}
+			}
 		case(1):
-		{
-			data = msg.get_length_HI();	
+			{
+			data = msg.get_length_HI();
+			#if _USE_XBEE_ESC	
 			if(data == START_BYTE || data == ESC_BYTE || data == XON_BYTE || data == XOFF_BYTE)
 			{//handle escape character
 				data = data ^ XOR_BYTE;
 				tran_buff[tran_pos++] = ESC_BYTE;	
 			}
+			#endif
 			tran_buff[tran_pos++] = data;
 			state++;
 			break;
+			}
+		case(2):
+			{
+			tran_buff[tran_pos++] = msg.get_length_LO();
+			state++;
+			break;
+			}
+		case(3):
+			{
+			uint8_t *ptr = msg.get_frameptr();
+			uint16_t length = msg.get_frame_length();
+			uint16_t count = 0;
+			while(count < length)
+			{
+				#if _DEBUG_XBEE_SEND_MSG
+                                printf("writing [%x]  into %d in tran_buff, count is [%d] length [%d]\n",*(ptr + count),tran_pos,count,length);
+                                #endif
+				tran_buff[tran_pos++] = *(ptr+count++);
+			}
+			state++;
+			break;
+			}
+		case(4):
+			{
+				#if _DEBUG_XBEE_SEND_MSG
+				printf("get_CheckSum() return %d\n",msg.get_CheckSum());
+				#endif
+				tran_buff[tran_pos++] = msg.get_CheckSum();
+				state++;	
+				break;
+			}
+		default:
+			{
+			printf("error in XBEE_send_msg()\n");
+			}		
 		}
-		tran_buff[tran_pos++] = msg.get_length_LO();
-		uint8_t *ptr = msg.get_frameptr();
-		uint16_t length = get_frame_length();
-		while()
-		}	
-	}			
+		#if _DEBUG_XBEE_SEND_MSG
+		printf("state %d, [%x] written into %d in tran_buff\n",state,tran_buff[tran_pos - 1],tran_pos - 1);
+		#endif	
+	}
+	XBEE_write(this->tran_buff,tran_pos);
+				
 }
 
 

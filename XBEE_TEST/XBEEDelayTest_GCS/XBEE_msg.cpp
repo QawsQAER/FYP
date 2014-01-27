@@ -66,8 +66,10 @@ bool XBEE_msg::verify_CheckSum()
 	sum+=_recv_CheckSum;
 	uint8_t lsb = (sum << (sizeof(uint32_t) - sizeof(uint8_t))) >> (sizeof(uint32_t) - sizeof(uint8_t));
 	#if _DEBUG_VERIFY_CHECKSUM
+	this->set_CheckSum();
+	printf("get_CheckSum() return %x\n",this->get_CheckSum());
 	if(lsb != 0xff)
-	printf("Error: CheckSum received incorrect!\n");
+	printf("Error: CheckSum received incorrect! lsb [%x]\n",lsb);
 	else if(lsb == 0xff)
 	printf("CheckSum Correct\n");
 	#endif
@@ -97,7 +99,7 @@ void XBEE_msg::show_hex()
 	printf("%x ", _length_HI);
 	printf("%x ", _length_LO);
 	uint16_t count = 0;
-	while(count <= frame_length)
+	while(count < frame_length)
 		printf("%x ",*(_frameptr + count++));
 	printf("\n");	
 
@@ -145,12 +147,29 @@ uint8_t XBEE_msg::get_recv_option()
 void XBEE_msg::detect_esc()
 {frame_length--;}
 
-uint32_t get_length_HI()
+uint32_t XBEE_msg::get_length_HI()
 {return _length_HI;}
 
-uint32_t get_length_LO()
+uint32_t XBEE_msg::get_length_LO()
 {return _length_LO;}
 
+void XBEE_msg::set_dest_addr_HI(const uint32_t &ADDR_HI)
+{
+	//for little endian
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET) = (ADDR_HI << 24) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 1) = (ADDR_HI << 16) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 2) = (ADDR_HI << 8) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 3) = (ADDR_HI << 0) >> 24;
+}
+	
+void XBEE_msg::set_dest_addr_LO(const uint32_t &ADDR_LO)
+{
+	//for little endian
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 4) = (ADDR_LO << 24) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 5) = (ADDR_LO << 16) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 6) = (ADDR_LO << 8) >> 24;
+	*(_frameptr + FRAME_TRAN_ADDR_OFFSET + 7) = (ADDR_LO << 0) >> 24;
+}
 
 
 

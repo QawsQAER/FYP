@@ -15,6 +15,15 @@
 #define FRAME_RECV_OPTION_OFFSET 11
 #define FRAME_RECV_DATA_OFFSET 12 
 
+/*--------MACRO FOR THE XBEE TRANSMIT REQUEST---------------
+------------------------------------------------------------
+-----------------------------------------------------------*/
+#define FRAME_TRAN_ID_OFFSET 1
+#define FRAME_TRAN_ADDR_OFFSET 2
+#define FRAME_TRAN_NET_ADDR_OFFSET 10
+#define FRAME_TRAN_RADIUS_OFFSET 12
+#define FRAME_TRAN_OPTION_OFFSET 13
+#define FRAME_TRAN_DATA_OFFSET 14
 class XBEE_msg
 {
 	private:
@@ -62,7 +71,10 @@ class XBEE_msg
 			sending out.
 		*/
 		uint32_t get_length_HI();
-		uint32_t get_length_LO();		
+		uint32_t get_length_LO();
+		void set_dest_addr_HI(const uint32_t &ADDR_HI);
+		void set_dest_addr_LO(const uint32_t &ADDR_LO);
+		void set_frame_id(uint8_t frame_id);		
 };
 
 
