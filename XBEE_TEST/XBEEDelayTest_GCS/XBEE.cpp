@@ -1,3 +1,15 @@
+/*
+
+        This source code is written by Edward HUANG, and Tony Yi
+        For the development of their Final Year Project
+        Department of Computer Science and Engineering
+        The Chinese University of HONG KONG
+
+*/
+
+//
+//	IMPLEMENTATION OF XBEE.h
+//
 #include "XBEE.h"
 
 
@@ -18,6 +30,7 @@ XBEE::XBEE(int fd,uint32_t Serial_Num_HI, uint32_t Serial_Num_LO,  uint8_t ID)
 XBEE::~XBEE()
 {
 	//for integrity
+	close(fd);
 }
 //TODO possible software flow control
 void XBEE::XBEE_write(uint8_t *tran_buff,uint8_t size)
@@ -171,12 +184,12 @@ void XBEE::XBEE_parse_XBEE_msg()
 			{	
 
 				//allocate memory for frame data storage
-				uint8_t *temp =new uint8_t[msg_p->get_frame_length() + 1];
-				msg_p->set_frameptr(temp);
+				//uint8_t *temp =new uint8_t[msg_p->get_frame_length() + 1];
+				//msg_p->set_frameptr(temp);
 				#if _DEBUG_XBEE_parse_XBEE_msg
 				printf("case3\n");
 				printf("msg_p->get_frame_length() %d\n",msg_p->get_frame_length());
-				printf("frameptr: [%p]\n",temp);
+				printf("frameptr: [%p]\n",msg_p->get_frameptr());
 				#endif
 			
 				#if _USE_XBEE_ESC
@@ -188,15 +201,13 @@ void XBEE::XBEE_parse_XBEE_msg()
 					//printf("detect escape, original is [%x], changed into",data);
 					data = data ^ XOR_BYTE;
 					//printf(" [%x]\n",data);
-					*(temp + frame_count) = data;
 					msg_p->set_API_type(data);
 					current++;
 				}
 				else
 				#endif
-				{	//if not escape character			
-					*(temp + frame_count) = recv_buff[current];
-;					msg_p->set_API_type(recv_buff[current++]);
+				{	//if not escape character
+					msg_p->set_API_type(recv_buff[current++]);
 				}
 				frame_count++;
 				while(current >= this->recv_pos)

@@ -14,11 +14,6 @@ int main(int argc, char ** argv)
 	char portname[32];
 	if(argc < 2)
 	{
-		/*
-		printf("Error: Invalid number of parameters\n");
-		printf("Usage: ./test [name of the ttyUSBX]\n");
-		return 0;
-		*/
 		printf("Warning: Using default port /dev/ttyUSB0\n");
 		strcpy(portname,"/dev/ttyUSB0");
 	}
@@ -32,6 +27,9 @@ int main(int argc, char ** argv)
 	#if _DEBUG_XBEE_parse_XBEE_msg
 		printf("!!!DEBUGING XBEE_parse_XBEE_msg()\n");
 	#endif
+
+
+	//Configure the port	
 	int fd = open(portname, O_RDWR | O_NOCTTY | O_SYNC);
 	if(fd < 0)
 	{
@@ -40,23 +38,20 @@ int main(int argc, char ** argv)
 	}
 	set_interface_attribs(fd,B57600,0);
 	set_blocking(fd,0);
+	//Configuration done
+
+	//declaring XBEE module
 	XBEE xbee_coor(fd,0x00000000,0x0000ffff,0);
-	//char dummy[32];
+
 	while(1)
 	{
-		//scanf("%s",dummy);
-		//sleep for 5s
-		//printf("\n\nSLEEPING\n");
+		//read every 5s
 		sleep(5);
-		//printf("1.READING\n");
 		xbee_coor.XBEE_read_into_recv_buff();
-		//printf("2.PARSING\n");
-		printf("-----------------------\n");
-		xbee_coor.XBEE_show_recv_buff();
-		printf("-----------------------\n");
-
+		//after read, data in recv_buff should be parse by XBEE::XBEE_parse_XBEE_msg()
 		xbee_coor.XBEE_parse_XBEE_msg();
-		//printf("3.SHOWING\n");
+
+		//show the message
 		xbee_coor.XBEE_show_msg();	
 	}
 	return 0;

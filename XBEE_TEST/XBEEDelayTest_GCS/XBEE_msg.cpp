@@ -9,10 +9,9 @@ XBEE_msg::XBEE_msg()
 	_errorcode = 0;
 	_length_HI = 0;
 	_length_LO = 0;
-	_API_type = 0;
 	_CheckSum = 0;
 	_recv_CheckSum = 0;
-	_frameptr = NULL;
+	_frameptr = new uint8_t[FRAME_MAX_SIZE];
 	frame_length = 0;		
 }
 
@@ -26,8 +25,10 @@ XBEE_msg::~XBEE_msg()
 	delete _frameptr;
 }
 
+/*
 void XBEE_msg::set_frameptr(uint8_t *ptr)
 {_frameptr = ptr;}
+*/
 
 uint8_t * XBEE_msg::get_frameptr()
 {return _frameptr;}
@@ -88,7 +89,7 @@ void XBEE_msg::set_length_HI(uint8_t length_HI)
 {_length_HI = length_HI;}
 
 void XBEE_msg::set_API_type(uint8_t API_type)
-{_API_type = API_type;}
+{*(_frameptr) = API_type;}
 
 void XBEE_msg::set_recv_CheckSum(uint8_t recv_CheckSum)
 {_recv_CheckSum = recv_CheckSum;}
@@ -101,6 +102,7 @@ void XBEE_msg::show_hex()
 	uint16_t count = 0;
 	while(count < frame_length)
 		printf("%x ",*(_frameptr + count++));
+	printf("%x %x",_CheckSum,_recv_CheckSum);
 	printf("\n");	
 
 }
