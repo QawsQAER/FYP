@@ -42,7 +42,8 @@ XBEE_msg.o: XBEE_msg.h XBEE_msg.cpp
 	$(CC) -o XBEE_msg.o -c XBEE_msg.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 Serial.o: Serial.h Serial.cpp
 	$(CC) -o Serial.o -c Serial.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
-
+pprz_msg.o: pprz_msg.h pprz_msg.cpp
+	$(CC) -o pprz_msg.o -c pprz_msg.cpp $(CFLGAS) $(DEBUG_MACRO) $(OPTION)
 clean:
 	rm -f $(TARGETS)
 	rm -f *.o
