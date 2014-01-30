@@ -211,7 +211,17 @@ void XBEE_msg::set_tran_packet(const uint32_t &ADDR_HI,const uint32_t &ADDR_LO,c
 	
 }
 
+pprz_msg XBEE_msg::get_pprz_msg()
+{	
+	pprz_msg pprz_msg1;
+	
+	return pprz_msg1;
+}
 
+void XBEE_msg::set_pprz_msg(const pprz_msg &ptr)
+{
+	return ;
+}
 
 
 

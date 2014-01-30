@@ -8,6 +8,7 @@
 */
 
 #include "main.h"
+#include "pprz_msg.h"
 
 #define START_BYTE 0x7E
 #define ESC_BYTE 0x7D
@@ -137,9 +138,18 @@ class XBEE_msg
 		void set_tran_frame_id(const uint8_t &frame_id);
 		void set_tran_radius(const uint8_t &radius);
 		void set_tran_option(const uint8_t &option);
-		void set_tran_data(const uint8_t *data,const uint16_t &size
-);
-		//------------------------------------------//		
+		void set_tran_data(const uint8_t *data,const uint16_t &size);
+		//------------------------------------------//
+
+
+
+
+
+		//for the compatible usage of pprz_msg and XBEE_msg
+		
+		pprz_msg get_pprz_msg();
+
+		void set_pprz_msg(const pprz_msg &ptr);	
 };
 
 
