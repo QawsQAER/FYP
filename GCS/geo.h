@@ -7,14 +7,10 @@
 
 */
 
+/* 
+        This source code referenced to the implemenetation of some geo functions
+        in the paparazzi open source project
+        http:\\paparazzi.enac.fr
+*/
 #include "main.h"
 
-
-class Ground_Station
-{
-	private:
-			
-	public:
-		Ground_Station();
-		~Ground_Station();
-}

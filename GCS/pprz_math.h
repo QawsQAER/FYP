@@ -7,14 +7,8 @@
 
 */
 
-#include "main.h"
-
-
-class Ground_Station
-{
-	private:
-			
-	public:
-		Ground_Station();
-		~Ground_Station();
-}
+/* 
+	This source code referenced to the implemenetation of some math functions
+	in the paparazzi open source project
+	http:\\paparazzi.enac.fr
+*/
