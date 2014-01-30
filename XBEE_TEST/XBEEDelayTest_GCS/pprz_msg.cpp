@@ -22,19 +22,24 @@ void pprz_msg::pprz_put_byte(uint8_t *ptr)
 		//SHOULD SET _errorcode
 	}
 	else
-	*(this->_data_ptr + this->_length++) = *ptr;
+	{
+		//printf("puting *ptr %02x\n",*ptr);
+		*(this->_data_ptr + this->_length++) = *ptr;
+	}
 }
 
 void pprz_msg::pprz_put_2bytes(uint8_t *ptr)
 {
-	this->pprz_put_byte(ptr);
+	//for little endian, the ptr would be pointing at the LSB of the uint16_t
+	//ptr + 1 to make the MSB comes first
 	this->pprz_put_byte(ptr + 1);
+	this->pprz_put_byte(ptr);
 }
 
 void pprz_msg::pprz_put_4bytes(uint8_t *ptr)
 {
-	this->pprz_put_2bytes(ptr);
 	this->pprz_put_2bytes(ptr + 2);
+	this->pprz_put_2bytes(ptr);
 }
 
 uint8_t pprz_msg::pprz_read_byte()
@@ -45,17 +50,20 @@ uint8_t pprz_msg::pprz_read_byte()
 		return 0;
 	}
 	else
+	{
+		//printf("reading *ptr %02x\n",*(this->_data_ptr + this->_pos));
 		return *(this->_data_ptr + this->_pos++); 
+	}
 }
 
 uint16_t pprz_msg::pprz_read_2bytes()
 {
-	return this->pprz_read_byte() << 8 + this->pprz_read_byte();
+	return (((uint16_t)this->pprz_read_byte()) << 8) + this->pprz_read_byte();
 }
 
 uint32_t pprz_msg::pprz_read_4bytes()
 {
-	return this->pprz_read_2bytes() << 16 + this->pprz_read_2bytes();
+	return (((uint32_t)this->pprz_read_2bytes()) << 16) + this->pprz_read_2bytes();
 }
 
 void pprz_msg::show_hex()
