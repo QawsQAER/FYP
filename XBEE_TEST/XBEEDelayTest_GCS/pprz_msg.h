@@ -24,4 +24,5 @@ class pprz_msg
 		uint8_t pprz_read_byte();
 		uint16_t pprz_read_2bytes();
 		uint32_t pprz_read_4bytes();
+		void show_hex();
 };

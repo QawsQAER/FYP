@@ -14,26 +14,37 @@ CFLAGS = -Wall -g
 #############################################
 
 
-TARGETS= main test test_sender
+TARGETS= main test test_sender test_pprz_msg
 all: main test
 	rm -f *.o	
 
 main: main.o XBEE.o Serial.o 
 	$(CC) -o main *.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
+	rm -f *.o
+###############################################################################
+###############################################################################
+##############################################################################
 test: test.o Serial.o XBEE.o XBEE_msg.o
 	$(CC) -o test test.o Serial.o XBEE.o XBEE_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
-	rm -f test.o
-	rm -f Serial.o
+	rm -f *.o
+#-----------------------------------------------------------------------------#
 test_sender: test_sender.o Serial.o XBEE.o XBEE_msg.o
 	$(CC) -o test_sender test_sender.o Serial.o XBEE.o XBEE_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
-	rm -f test_sender.o
-	rm -f Serial.o
+	rm -f *.o
+#-----------------------------------------------------------------------------#
+test_pprz_msg: test_pprz_msg.o pprz_msg.o
+	$(CC) -o test_pprz_msg test_pprz_msg.o pprz_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
+	rm -f *.o
+##############################################################################
+##############################################################################
+##############################################################################
 
 test.o: test.cpp
 	$(CC) -o test.o -c test.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 test_sender.o: test_sender.cpp
 	$(CC) -o test_sender.o -c test_sender.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
-
+test_pprz_msg.o: test_pprz_msg.cpp
+	$(CC) -o test_pprz_msg.o -c test_pprz_msg.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 main.o: main.cpp main.h
 	$(CC) -o main.o -c main.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 XBEE.o: XBEE.h XBEE.cpp XBEE_msg.cpp

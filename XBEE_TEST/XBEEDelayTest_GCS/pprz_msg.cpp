@@ -15,7 +15,7 @@ pprz_msg::~pprz_msg()
 }
 
 
-inline void pprz_msg::pprz_put_byte(uint8_t *ptr)
+void pprz_msg::pprz_put_byte(uint8_t *ptr)
 {
 	if(_length + 1 > PPRZ_MSG_MAX_SIZE)
 	{
@@ -25,19 +25,19 @@ inline void pprz_msg::pprz_put_byte(uint8_t *ptr)
 	*(this->_data_ptr + this->_length++) = *ptr;
 }
 
-inline void pprz_msg::pprz_put_2bytes(uint8_t *ptr)
+void pprz_msg::pprz_put_2bytes(uint8_t *ptr)
 {
 	this->pprz_put_byte(ptr);
 	this->pprz_put_byte(ptr + 1);
 }
 
-inline void pprz_msg::pprz_put_4bytes(uint8_t *ptr)
+void pprz_msg::pprz_put_4bytes(uint8_t *ptr)
 {
 	this->pprz_put_2bytes(ptr);
 	this->pprz_put_2bytes(ptr + 2);
 }
 
-inline uint8_t pprz_msg::pprz_read_byte()
+uint8_t pprz_msg::pprz_read_byte()
 {
 	if(this->_pos >= this->_length)
 	{
@@ -48,14 +48,24 @@ inline uint8_t pprz_msg::pprz_read_byte()
 		return *(this->_data_ptr + this->_pos++); 
 }
 
-inline uint16_t pprz_msg::pprz_read_2bytes()
+uint16_t pprz_msg::pprz_read_2bytes()
 {
 	return this->pprz_read_byte() << 8 + this->pprz_read_byte();
 }
 
-inline uint32_t pprz_msg::pprz_read_4bytes()
+uint32_t pprz_msg::pprz_read_4bytes()
 {
 	return this->pprz_read_2bytes() << 16 + this->pprz_read_2bytes();
+}
+
+void pprz_msg::show_hex()
+{
+	uint16_t count = 0;
+	while(count < this->_length)
+	{
+		printf("%02x ",*(this->_data_ptr + count++));
+	}
+	printf("\n");
 }
 
 
