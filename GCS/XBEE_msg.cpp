@@ -222,12 +222,17 @@ void XBEE_msg::set_tran_packet(const uint32_t &ADDR_HI,const uint32_t &ADDR_LO,c
 pprz_msg XBEE_msg::get_pprz_msg()
 {	
 	pprz_msg pprz_msg1;
-	
+	uint16_t count = 0;
+	while(count < this->frame_length - FRAME_TRAN_DATA_OFFSET)
+	{
+		pprz_msg1.pprz_put_byte(this->_frameptr + FRAME_TRAN_DATA_OFFSET + count++);
+	}	
 	return pprz_msg1;
 }
 
 void XBEE_msg::set_pprz_msg(const pprz_msg &ptr)
 {
+	this->set_tran_data(ptr->pprz_get_data_ptr,ptr->pprz_get_length());	
 	return ;
 }
 

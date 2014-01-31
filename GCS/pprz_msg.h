@@ -27,6 +27,8 @@ class pprz_msg
 	public:
 		pprz_msg();
 		~pprz_msg();
+		uint8_t pprz_get_data_ptr(){return _data_ptr;}
+		uint16_t pprz_get_length(){return _length;}
 		void pprz_put_byte(uint8_t *ptr);
 		void pprz_put_2bytes(uint8_t *ptr);
 		void pprz_put_4bytes(uint8_t *ptr);
