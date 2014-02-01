@@ -230,11 +230,15 @@ pprz_msg XBEE_msg::get_pprz_msg()
 	return pprz_msg1;
 }
 
-void XBEE_msg::set_pprz_msg(const pprz_msg &ptr)
+/*
+void XBEE_msg::set_pprz_msg(pprz_msg &pprz_message)
 {
-	this->set_tran_data(ptr->pprz_get_data_ptr,ptr->pprz_get_length());	
+	this->set_tran_data(pprz_message.pprz_get_data_ptr(),pprz_message.pprz_get_length());	
+	this->set_frame_length();
+	this->set_CheckSum();
 	return ;
 }
+*/
 
 
 

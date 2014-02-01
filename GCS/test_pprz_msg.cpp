@@ -1,6 +1,6 @@
 #include "main.h"
 #include "pprz_msg.h"
-
+#include "XBEE_msg.h"
 int main()
 {
 	uint8_t sender_id = 1;
@@ -28,5 +28,12 @@ int main()
 	recv_pos_z = data.pprz_read_4bytes();
 
 	printf("From sender %d ,msg_id %d, pos_x %d, pos_y %d, pos_z %d\n",recv_sender_id,recv_msg_id,recv_pos_x,recv_pos_y,recv_pos_z);
+
+	XBEE_msg xbee_msg;
+	xbee_msg.set_tran_packet(0x00000000,0x0000ffff,0xff,0xfe,data.pprz_get_data_ptr(),data.pprz_get_length());
+	//xbee_msg.set_pprz_msg(data);
+	xbee_msg.show_hex();
+
+	xbee_msg.get_pprz_msg().show_hex();
 	return 0;
 }

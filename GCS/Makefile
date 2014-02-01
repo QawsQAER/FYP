@@ -32,8 +32,8 @@ test_sender: test_sender.o Serial.o XBEE.o XBEE_msg.o
 	$(CC) -o test_sender test_sender.o Serial.o XBEE.o XBEE_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 	rm -f *.o
 #-----------------------------------------------------------------------------#
-test_pprz_msg: test_pprz_msg.o pprz_msg.o
-	$(CC) -o test_pprz_msg test_pprz_msg.o pprz_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
+test_pprz_msg: test_pprz_msg.o pprz_msg.o XBEE_msg.o
+	$(CC) -o test_pprz_msg test_pprz_msg.o pprz_msg.o XBEE_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 	rm -f *.o
 ##############################################################################
 ##############################################################################

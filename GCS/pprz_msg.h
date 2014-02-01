@@ -6,7 +6,8 @@
         The Chinese University of HONG KONG
 
 */
-
+#ifndef _PPRZ_MSG_H
+#define _PPRZ_MSG_H
 #include "main.h"
 
 
@@ -27,8 +28,8 @@ class pprz_msg
 	public:
 		pprz_msg();
 		~pprz_msg();
-		uint8_t pprz_get_data_ptr(){return _data_ptr;}
-		uint16_t pprz_get_length(){return _length;}
+		const uint8_t *pprz_get_data_ptr(){return _data_ptr;}
+		const uint16_t pprz_get_length(){return _length;}
 		void pprz_put_byte(uint8_t *ptr);
 		void pprz_put_2bytes(uint8_t *ptr);
 		void pprz_put_4bytes(uint8_t *ptr);
@@ -37,3 +38,5 @@ class pprz_msg
 		uint32_t pprz_read_4bytes();
 		void show_hex();
 };
+
+#endif

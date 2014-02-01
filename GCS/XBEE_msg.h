@@ -149,7 +149,7 @@ class XBEE_msg
 		
 		pprz_msg get_pprz_msg();
 
-		void set_pprz_msg(const pprz_msg &ptr);	
+		//void set_pprz_msg(pprz_msg &pprz_message);	
 };
 
 
