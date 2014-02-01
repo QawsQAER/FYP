@@ -55,8 +55,8 @@ Serial.o: Serial.h Serial.cpp
 	$(CC) -o Serial.o -c Serial.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 pprz_msg.o: pprz_msg.h pprz_msg.cpp
 	$(CC) -o pprz_msg.o -c pprz_msg.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
-geo.o: geo.h geo.cpp
-	$(CC) -o geo.o -c geo.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
+geo.o: geo.h geo.cpp GCS_math.h
+	$(CC) -o geo.o -c geo.cpp GCS_math.h $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 ###############################################################################
 ###############################################################################
 ###############################################################################

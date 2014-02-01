@@ -32,13 +32,21 @@ struct Int32Mat33
 //--MACRO For realizing Math functionality--------//
 //------------------------------------------------//
 
-#define INT32_POS_FRAC
+#define INT32_POS_FRAC 8 
 
-#define HIGH_RES_TRIG_FRAC
+#define VECT3_DIFF(_c, _a, _b)\
+{\
+	(_c).x = (_a).x - (_b).x;\
+	(_c).y = (_a).y - (_b).y;\
+	(_c).z = (_a).z - (_b).z;\
+}
 
-#define VECT3_DIFF
-
-#define INT32_VECT3_LSHIFT
+#define INT32_VECT3_LSHIFT(_o,_i,_l)\
+{\
+	(_o).x = ((_i).x << (_l));\
+	(_o).y = ((_i).y << (_l));\
+	(_o).z = ((_i).z << (_l));\
+}
 
 
 
