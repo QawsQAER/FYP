@@ -14,6 +14,9 @@ Swarm::Swarm()
 	XBEE_ADDR_LO[1] = XBEE_END_ADDR_A_LO;	
 }
 
+Swarm::~Swarm()
+{
+}
 uint32_t Swarm::get_address_HI(uint8_t &AC_ID)
 {return XBEE_ADDR_HI[AC_ID];}
 
