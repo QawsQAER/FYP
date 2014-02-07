@@ -8,7 +8,7 @@
 */
 #include "main.h"
 #include "XBEE.h"
-
+#include "pprz_msg.h"
 int main(int argc, char ** argv)
 {
 	char portname[32];
@@ -52,7 +52,16 @@ int main(int argc, char ** argv)
 		xbee_coor.XBEE_parse_XBEE_msg();
 
 		//show the message
-		xbee_coor.XBEE_show_msg();	
+		//xbee_coor.XBEE_show_msg();
+		
+		while(!xbee_coor.msg.empty())
+		{
+			XBEE_msg * ptr = xbee_coor.msg.front();
+			xbee_coor.msg.pop();
+			pprz_msg data = ptr->get_pprz_msg();	
+			data.show_hex();
+			delete ptr;
+		}
 	}
 	return 0;
 }

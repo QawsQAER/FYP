@@ -223,9 +223,9 @@ pprz_msg XBEE_msg::get_pprz_msg()
 {	
 	pprz_msg pprz_msg1;
 	uint16_t count = 0;
-	while(count < this->frame_length - FRAME_TRAN_DATA_OFFSET)
+	while(count < this->frame_length - FRAME_RECV_DATA_OFFSET)
 	{
-		pprz_msg1.pprz_put_byte(this->_frameptr + FRAME_TRAN_DATA_OFFSET + count++);
+		pprz_msg1.pprz_put_byte(this->_frameptr + FRAME_RECV_DATA_OFFSET + count++);
 	}	
 	return pprz_msg1;
 }

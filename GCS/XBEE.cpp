@@ -317,9 +317,8 @@ void XBEE::XBEE_show_msg()
 		ptr = msg.front();
 		
 		msg.pop();
-		#if _DEBUG_XBEE_parse_XBEE_msg
 		ptr->show_hex();
-		#endif
+		/*
 		uint16_t length = ptr->get_recv_packet_data_length();
 		uint8_t *data_ptr = ptr->get_recv_packet_data_ptr();
 		uint8_t *str = new uint8_t[length + 1];
@@ -340,7 +339,7 @@ void XBEE::XBEE_show_msg()
 		printf("\"%s\"\n",str);
 		delete str;
 		
-	
+		*/
 		delete ptr;
 	}
 }

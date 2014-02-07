@@ -15,7 +15,9 @@ CFLAGS = -Wall -g
 
 
 TARGETS= main test test_sender test_pprz_msg test_GCS
+
 OBJECT= XBEE.o Ground_Station.o XBEE_msg.o pprz_msg.o Serial.o Swarm.o
+
 GROUND_STATION_SOURCES= Ground_Station.cpp #Swarm.cpp Serial.cpp XBEE.cpp XBEE_msg.cpp pprz_msg.cpp
 all: main test
 	rm -f *.o	
@@ -26,8 +28,8 @@ main: main.o XBEE.o Serial.o
 ###############################################################################
 ###############################################################################
 ##############################################################################
-test: test.o Serial.o XBEE.o XBEE_msg.o
-	$(CC) -o test test.o Serial.o XBEE.o XBEE_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
+test: test.o $(OBJECT)
+	$(CC) -o test test.o $(OBJECT) $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 	rm -f *.o
 #-----------------------------------------------------------------------------#
 test_sender: test_sender.o Serial.o XBEE.o XBEE_msg.o
@@ -41,6 +43,7 @@ test_pprz_msg: test_pprz_msg.o pprz_msg.o XBEE_msg.o
 #-----------------------------------------------------------------------------#
 test_GCS: test_GCS.o $(OBJECT)
 	$(CC) -o test_GCS test_GCS.o $(OBJECT) $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
+	rm -f *.o
 ##############################################################################
 ##############################################################################
 ##############################################################################

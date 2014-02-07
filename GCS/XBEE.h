@@ -52,9 +52,11 @@ class XBEE
 	//the record of the current usage of the receive buff
 	uint32_t recv_pos;
 	//the queue stroing pointer to XBEE message parsed from receive buff
-	std::queue<XBEE_msg *> msg;
+
+	//std::queue<XBEE_msg *> msg;
 
     public:
+	std::queue<XBEE_msg *> msg;
 	//Constructor for XBEE module, for data transmission and receving, and some configuration
 	//fd is the file descriptor open by fopen(), and should be pre-configured by set_interface_attribs() and set_blocking() provided by Serial.h
 	//Serial_Num_HI, Serial_Num_LO and ID are just for record, no usage for now

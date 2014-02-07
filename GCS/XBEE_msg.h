@@ -6,7 +6,8 @@
         The Chinese University of HONG KONG
 
 */
-
+#ifndef _XBEE_MSG_H
+#define _XBEE_MSG_H
 #include "main.h"
 #include "pprz_msg.h"
 
@@ -154,5 +155,5 @@ class XBEE_msg
 
 
 
-
+#endif
 
