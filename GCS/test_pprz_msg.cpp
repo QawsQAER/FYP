@@ -10,6 +10,7 @@ int main()
 	uint32_t pos_y = 100;
 	uint32_t pos_z = 88;
 	pprz_msg data;
+	/*
 	data.pprz_put_byte(&sender_id);
 	data.pprz_put_byte(&msg_id);
 	data.pprz_put_4bytes((uint8_t *) &pos_x);
@@ -30,6 +31,10 @@ int main()
 
 	printf("From sender %d ,msg_id %d, pos_x %d, pos_y %d, pos_z %d\n",recv_sender_id,recv_msg_id,recv_pos_x,recv_pos_y,recv_pos_z);
 
+	*/
+	uint8_t ac_id = 1;
+	uint8_t block_id = 2;
+	data.pprz_set_block(ac_id,block_id);
 	XBEE_msg xbee_msg;
 	xbee_msg.set_tran_packet(0x00000000,0x0000ffff,0xff,0xfe,data.pprz_get_data_ptr(),data.pprz_get_length());
 	//xbee_msg.set_pprz_msg(data);

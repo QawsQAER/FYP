@@ -15,6 +15,7 @@ CFLAGS = -Wall -g
 
 
 TARGETS= main test test_sender test_pprz_msg
+GROUND_STATION_SOURCES= Ground_Station.cpp #Swarm.cpp Serial.cpp XBEE.cpp XBEE_msg.cpp pprz_msg.cpp
 all: main test
 	rm -f *.o	
 
@@ -39,6 +40,8 @@ test_pprz_msg: test_pprz_msg.o pprz_msg.o XBEE_msg.o
 ##############################################################################
 ##############################################################################
 
+Ground_Station.o: Ground_Station.h Ground_Station.cpp
+	$(CC) -o Ground_Station.o -c $(GROUND_STATION_SOURCES) $(CFLAGS) $(DEBUGS_MACRO) $(OPTION)
 test.o: test.cpp
 	$(CC) -o test.o -c test.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 test_sender.o: test_sender.cpp
@@ -60,6 +63,7 @@ geo.o: geo.h geo.cpp GCS_math.h
 ###############################################################################
 ###############################################################################
 ###############################################################################
+.PHONY: clean 
 clean:
 	rm -f $(TARGETS)
 	rm -f *.o

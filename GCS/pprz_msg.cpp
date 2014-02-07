@@ -37,6 +37,19 @@ void pprz_msg::pprz_put_byte(uint8_t *ptr)
 	}
 }
 
+void pprz_msg::pprz_put_byte(uint8_t value)
+{
+	if(_length + 1 > PPRZ_MSG_MAX_SIZE)
+        {
+                //SHOULD SET _errorcode
+        }
+        else
+        {
+                //printf("puting *ptr %02x\n",*ptr);
+                *(this->_data_ptr + this->_length++) = value;
+        }
+
+}
 void pprz_msg::pprz_put_2bytes(uint8_t *ptr)
 {
 	//for little endian, the ptr would be pointing at the LSB of the uint16_t
@@ -85,7 +98,17 @@ void pprz_msg::show_hex()
 	printf("\n");
 }
 
-
+void pprz_msg::pprz_set_block(uint8_t &ac_id,uint8_t &block_id)
+{
+	//TODO Find out what should be the sender id here
+	//sender id
+	this->pprz_put_byte(&ac_id);	
+	//message id
+	this->pprz_put_byte((uint8_t)FORWARD_MSG_ID_BLOCK);
+	//message content
+	this->pprz_put_byte(&block_id);
+	this->pprz_put_byte(&ac_id);	
+}
 
 
 
