@@ -9,10 +9,12 @@
 #define QUAD_EXEC 2
 
 #define QUAD_NB 1
+
+enum QuadState {IDLE, INIT, READY, EXEC, WAIT};
 class Swarm
 {
 	private:
-		uint8_t state[QUAD_NB + 1];	
+		QuadState state[QUAD_NB + 1];	
 		uint32_t XBEE_ADDR_HI[QUAD_NB + 1];
 		uint32_t XBEE_ADDR_LO[QUAD_NB + 1];	
 	public:

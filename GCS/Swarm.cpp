@@ -9,7 +9,7 @@ Swarm::Swarm()
 		
 	}
 	*/
-	state[1] = 0;
+	state[1] = IDLE;
 	XBEE_ADDR_HI[1] = XBEE_END_ADDR_A_HI;
 	XBEE_ADDR_LO[1] = XBEE_END_ADDR_A_LO;	
 }

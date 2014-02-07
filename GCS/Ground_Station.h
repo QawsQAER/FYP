@@ -21,24 +21,8 @@ class Ground_Station
 		Swarm *Swarm_state;
 		XBEE *Com;
 		uint8_t GCS_state;
-	
-		void Send_Msg_set_home_point_here();
-		void Send_Msg_set_home_point_here(uint8_t AC_ID);
 
-		void Send_Msg_holding_point();
-		void Send_Msg_holding_point(uint8_t AC_ID);
-
-		void Send_Msg_start_engine();
-		void Send_Msg_start_engine(uint8_t AC_ID);			
-
-		void Send_Msg_takeoff();
-		void Send_Msg_takeoff(uint8_t AC_ID);
-		
-		void Send_Msg_landhere();
-		void Send_Msg_landhere(uint8_t AC_ID);
-		
-		void Send_Msg_landhome();
-		void Send_Msg_landhome(uint8_t AC_ID);		
+		void Send_Msg_Block(uint8_t &AC_ID, uint8_t BLOCK_ID);
 	public:
 		//Ground_Station();
 		//This function will initilize the serial port for communication and the xbee module etc.
@@ -47,7 +31,7 @@ class Ground_Station
 		//This function will initilize the navigation of all quadcopters
 		void init_nav_quadcopters();
 		//This function will initilize the navigation of the quadcopter with AC_ID
-		void init_nav_quadcopters(uint8_t AC_ID);
+		void init_nav_quadcopters(uint8_t &AC_ID);
 		
 		//This function will ask quadcopters to takeoff
 		void takeoff_quadcopters();
