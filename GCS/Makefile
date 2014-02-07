@@ -14,7 +14,8 @@ CFLAGS = -Wall -g
 #############################################
 
 
-TARGETS= main test test_sender test_pprz_msg
+TARGETS= main test test_sender test_pprz_msg test_GCS
+OBJECT= XBEE.o Ground_Station.o XBEE_msg.o pprz_msg.o Serial.o Swarm.o
 GROUND_STATION_SOURCES= Ground_Station.cpp #Swarm.cpp Serial.cpp XBEE.cpp XBEE_msg.cpp pprz_msg.cpp
 all: main test
 	rm -f *.o	
@@ -36,6 +37,10 @@ test_sender: test_sender.o Serial.o XBEE.o XBEE_msg.o
 test_pprz_msg: test_pprz_msg.o pprz_msg.o XBEE_msg.o
 	$(CC) -o test_pprz_msg test_pprz_msg.o pprz_msg.o XBEE_msg.o $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 	rm -f *.o
+
+#-----------------------------------------------------------------------------#
+test_GCS: test_GCS.o $(OBJECT)
+	$(CC) -o test_GCS test_GCS.o $(OBJECT) $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 ##############################################################################
 ##############################################################################
 ##############################################################################
@@ -50,6 +55,8 @@ test_pprz_msg.o: test_pprz_msg.cpp
 	$(CC) -o test_pprz_msg.o -c test_pprz_msg.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 main.o: main.cpp main.h
 	$(CC) -o main.o -c main.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
+Swarm.o : Swarm.cpp Swarm.h main.h address.h
+	$(CC) -o Swarm.o -c Swarm.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 XBEE.o: XBEE.h XBEE.cpp XBEE_msg.cpp
 	$(CC) -o XBEE.o -c XBEE.cpp $(CFLAGS) $(DEBUG_MACRO) $(OPTION)
 XBEE_msg.o: XBEE_msg.h XBEE_msg.cpp

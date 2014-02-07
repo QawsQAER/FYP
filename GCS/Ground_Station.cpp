@@ -30,7 +30,7 @@ Ground_Station::~Ground_Station()
 
 void Ground_Station::init_nav_quadcopters(uint8_t AC_ID)
 {
-	
+	this->Send_Msg_set_home_point_here(AC_ID);
 }
 
 void Ground_Station::Send_Msg_set_home_point_here(uint8_t AC_ID)
