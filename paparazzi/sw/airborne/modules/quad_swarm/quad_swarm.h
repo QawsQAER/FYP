@@ -25,10 +25,10 @@
 
 
 extern uint8_t self_state;
-extern void quad_swarm_init;
-extern void quad_swarm_periodic;
-extern void quad_swarm_event;
-extern void quad_swarm_datalink;
+extern void quad_swarm_init();
+extern void quad_swarm_periodic();
+extern void quad_swarm_event();
+extern void quad_swarm_datalink();
 
 #endif
 

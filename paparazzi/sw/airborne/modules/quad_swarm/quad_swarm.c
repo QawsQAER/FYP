@@ -23,9 +23,9 @@
 #include "modules/quad_swarm/quad_swarm.h"
 
 uint8_t self_state;
-void quad_swarm_init {}
-void quad_swarm_periodic {}
-void quad_swarm_event {}
-void quad_swarm_datalink {}
+void quad_swarm_init() {}
+void quad_swarm_periodic() {}
+void quad_swarm_event() {}
+void quad_swarm_datalink() {}
 
 

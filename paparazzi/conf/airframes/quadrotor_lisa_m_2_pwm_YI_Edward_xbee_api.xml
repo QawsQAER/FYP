@@ -45,7 +45,9 @@
   </firmware>
 
   <modules>
-	<load name="gps_ubx_ucenter.xml"/> <!--开机时配置GPS--> <!--configure the GPS when turn on the AP-->
+    <load name="gps_ubx_ucenter.xml"/> <!--开机时配置GPS--> <!--configure the GPS when turn on the AP-->
+    <load name="quad_swarm.xml"/>
+    <!--<load name="light_solar.xml"/>-->
   </modules>
 
   <servos driver="Pwm">
