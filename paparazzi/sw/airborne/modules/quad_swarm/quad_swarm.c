@@ -22,9 +22,10 @@
 
 #include "modules/quad_swarm/quad_swarm.h"
 
-// void quad_swarm_init {}
-// void quad_swarm_periodic {}
-// void quad_swarm_event {}
-// void quad_swarm_datalink {}
+uint8_t self_state;
+void quad_swarm_init {}
+void quad_swarm_periodic {}
+void quad_swarm_event {}
+void quad_swarm_datalink {}
 
 

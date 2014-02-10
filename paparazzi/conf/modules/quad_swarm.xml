@@ -2,7 +2,7 @@
 
 <module name="quad_swarm" dir="quad_swarm">
   <doc>
-    <description>This is the module for qulopment </description>
+    <description>This is the module for quad_swarm development </description>
   </doc>
   <header>
     <file file="quad_swarm.h"/>
