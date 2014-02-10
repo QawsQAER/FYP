@@ -23,12 +23,22 @@
 #ifndef QUAD_SWARM_H
 #define QUAD_SWARM_H
 
+#include "state.h"
 
+#define SWARM_INIT 0
+#define SWARM_NEGOTIATE_REF 1
+#define SWARM_WAIT_CMD 2
+#define SWARM_SEND_ACK 3
+#define SWARM_WAIT_ACK 4
+#define SWARM_EXEC_CMD 5
+#define SWARM_REPORT_STATE 6
+
+struct EcefCoor_i target;
 extern uint8_t self_state;
-extern void quad_swarm_init();
-extern void quad_swarm_periodic();
-extern void quad_swarm_event();
-extern void quad_swarm_datalink();
+extern void quad_swarm_init( void );
+extern void quad_swarm_periodic( void );
+extern void quad_swarm_event( void );
+extern void quad_swarm_datalink( void );
 
 #endif
 
