@@ -1856,6 +1856,34 @@
 
  <!--222 is free -->
  <!--223 is free -->
+<!--
+###
+###
+###  This is the message for quad_swarm reporting the quadcopters positions
+###
+###
+-->
+
+  <message name="quad_swarm_report" id="222">
+    <field name="AC_ID" type="uint8"/>
+    <field name="ecef_x" type="int32" unit="cm" alt_unit="m"/>
+    <field name="ecef_y" type="int32" unit="cm" alt_unit="m"/>
+    <field name="ecef_z" type="int32" unit="cm" alt_unit="m"/>
+    <field name="state" type="uint8"/> <!--self_state in paparazzi/sw/modules/quad_swarm/quad_swarm.h-->
+  </message>
+
+  <message name="quad_swarm_ack" id="223">
+    <field name="AC_ID" type="uint8"/>
+    <field name="ack" type="uint8"/>
+  </message>
+<!--
+###
+###
+###  End of the message we've defined
+###
+###
+-->
+
  <!--224 is free -->
  <!--225 is free -->
  <!--226 is free -->
@@ -2108,33 +2136,6 @@
     <field name="V_Down" type="double"/>
   </message>
 
-<!--
-###
-###
-###  This is the message for quad_swarm reporting the quadcopters positions
-###
-###
--->
-  <message name="quad_swarm_report" id="256">
-    <field name="AC_ID" type="uint8"/>
-    <field name="ecef_x" type="int32" unit="cm" alt_unit="m"/>
-    <field name="ecef_y" type="int32" unit="cm" alt_unit="m"/>
-    <field name="ecef_z" type="int32" unit="cm" alt_unit="m"/>
-    <field name="state" type="uint8"/> <!--self_state in paparazzi/sw/modules/quad_swarm/quad_swarm.h-->
-  </message>
-  
-  <message name="quad_swarm_ack" id="257">
-    <field name="AC_ID" type="uint8"/>
-    <field name="ack" type="uint8"/>
-  </message>
-<!--
-###
-###
-###  End of the message we've defined
-###
-###
--->
-
 
 </class>
 
@@ -2248,12 +2249,13 @@
 -->
   
   <!--(0, 0, 0) would be considered as an ack-->
+  <!--
   <message name="quad_swarm_msg" id="15" link = "forwarded">
     <field name="tar_ecef_pos_x" type="int32" unit="cm"/>
     <field name="tar_ecef_pos_y" type="int32" unit="cm"/>
     <field name="tar_ecef_pos_z" type="int32" unit="cm"/>
   </message>
-
+  -->
 <!--
 ###
 ###
