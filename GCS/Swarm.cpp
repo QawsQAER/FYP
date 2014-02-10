@@ -9,9 +9,14 @@ Swarm::Swarm()
 		
 	}
 	*/
-	state[1] = IDLE;
 	XBEE_ADDR_HI[1] = XBEE_END_ADDR_A_HI;
 	XBEE_ADDR_LO[1] = XBEE_END_ADDR_A_LO;	
+	uint8_t count = 0;
+	while(count < QUAD_NB + 1)
+	{
+		state[count] = IDLE;
+		memset((void *) &pos[count],0,sizeof(struct EcefCoor_i));
+	}		
 }
 
 Swarm::~Swarm()

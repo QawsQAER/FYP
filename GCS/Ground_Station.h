@@ -14,6 +14,7 @@
 #include "pprz_msg.h"
 #include "Swarm.h"
 #include "Serial.h"
+#include "geo.h"
 
 class Ground_Station
 {
@@ -21,7 +22,8 @@ class Ground_Station
 		Swarm *Swarm_state;
 		XBEE *Com;
 		uint8_t GCS_state;
-
+		EcefCoor_i ref_ecef;
+		NedCoor_i ref_ned;
 		void Send_Msg_Block(uint8_t &AC_ID, uint8_t BLOCK_ID);
 	public:
 		//Ground_Station();

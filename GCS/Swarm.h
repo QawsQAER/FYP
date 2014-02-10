@@ -3,6 +3,8 @@
 
 #include "main.h"
 #include "address.h"
+#include "geo.h"
+
 
 #define QUAD_INIT 0
 #define QUAD_RECV 1
@@ -17,6 +19,7 @@ class Swarm
 		QuadState state[QUAD_NB + 1];	
 		uint32_t XBEE_ADDR_HI[QUAD_NB + 1];
 		uint32_t XBEE_ADDR_LO[QUAD_NB + 1];	
+		struct EcefCoor_i pos[QUAD_NB + 1];
 	public:
 		Swarm();
 		~Swarm();
