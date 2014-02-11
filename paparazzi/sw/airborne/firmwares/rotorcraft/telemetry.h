@@ -201,7 +201,6 @@
   }
 
 
-
 #include "firmwares/rotorcraft/stabilization.h"
 #define PERIODIC_SEND_RATE_LOOP(_trans, _dev) {                          \
     DOWNLINK_SEND_RATE_LOOP(_trans, _dev,                                \

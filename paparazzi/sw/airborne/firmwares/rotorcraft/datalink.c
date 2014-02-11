@@ -137,6 +137,10 @@ void dl_parse_msg(void) {
 /**------------------------------------------------------------------*/
 
 
+//TODO add parsing message quad_swarm_msg here
+#ifdef _QUAD_SWARM_H
+
+#endif
 #if defined USE_NAVIGATION
   case DL_BLOCK :
     {
