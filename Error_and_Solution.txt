@@ -23,4 +23,12 @@ This file is used for record some solutions when you face ERROR.
   crw-rw-rw- 1 root wheel 11, 26 20 Jan 14:38 /dev/tty.usbserial-000013FD
   lrwxr-xr-x 1 root wheel 0 20 Jan 14:42 /dev/ttyUSB0 -> /dev/tty.usbserial-000013FD
 
-2.
+2.When you “make” paparazzi and there comes report like “error: can’t find *** in ~/paparazzi/sw/ext” or
+  make[2]: *** No rule to make target `lib'.  Stop.
+  make[1]: *** [libopencm3.module] Error 2
+  make: *** [ext] Error 2. 
+  This is because the libraries inside ~/paparazzi/sw/ext are using external libraries which are git pull from other git remote repository.
+
+  Copy the “useable” ~paparazzi/sw/ext directory to the local directory. [This is not a proper solution]
+
+  [Proper Solution]:
